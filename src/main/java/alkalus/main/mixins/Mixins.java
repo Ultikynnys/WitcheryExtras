@@ -44,7 +44,7 @@ public enum Mixins implements IMixins {
                     "witchery.ExtendedPlayerLevelMixin",
                     "witchery.ExtendedPlayerVampirePowerMixin",
                     "witchery.ShapeshiftMixin",
-                    "witchery.ItemGeneralLilithMixin")
+                    "witchery.EntityLilithMixin")
             .addClientMixins("witchery.ItemBrewMixin")
             .setPhase(Phase.LATE)),
     WITCHERY_NEI_CONFIG(new MixinBuilder()

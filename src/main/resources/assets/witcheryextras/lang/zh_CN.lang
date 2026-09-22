@@ -11,3 +11,7 @@ gui.witcheryextras.distilleryidle.title=Distillery
 gui.witcheryextras.spinningwheel.title=Spinning Wheel
 gui.witcheryextras.witchesoven.title=Witches Oven
 gui.witcheryextras.leonardsurn.title=Leonard's Urn
+
+witcheryextras.lilith.warding.notvampire=莉莉丝把焦点在手中翻转。"防护之术,本是为了将伤害挡在外面,小家伙……可你没有可供我教导的血脉。等你经历了漫漫长夜再来吧。"
+witcheryextras.lilith.warding.notready=莉莉丝淡淡一笑。"你想精通我的防护之术?几个世纪以来,我一直在打磨这门手艺,好抵御太阳的诅咒。等你饮足十夜的鲜血,带着这枚焦点来找我,我便倾囊相授。"
+witcheryextras.lilith.warding.ascended=莉莉丝用焦点轻划过你的额头,低声念诵防护咒文。"烈日再也伤不了你了。在它的注视下行走吧,黑夜之子——闪亮一点也无妨,这样更能激怒猎人。"你的血脉震颤着变得更加深沉。(吸血鬼等级提升至 11 级——暮光吸血鬼)

@@ -1,16 +1,16 @@
 package alkalus.main.handlers;
 
-import java.lang.reflect.Method;
 import java.util.WeakHashMap;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumChatFormatting;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.emoniph.witchery.common.ExtendedPlayer;
+import com.emoniph.witchery.util.ChatUtil;
 import com.emoniph.witchery.util.ParticleEffect;
 import com.emoniph.witchery.util.SoundEffect;
 
@@ -24,18 +24,20 @@ import cpw.mods.fml.common.gameevent.TickEvent;
  *     food point; we credit 4 back per point so the net cost becomes 1.</li>
  * <li>Passive blood regeneration while fed, scaling with vampire level (Tier reward).</li>
  * <li>Vampire level 11 - "Twilight Vampire": sunlight no longer drains, debuffs or burns them
- *     (see CreatureUtilMixin); instead they periodically sparkle, a nod to a certain saga.
- *     Reached by drinking Lilith's Blood while at level 10 AND wearing an MV-or-better electric
- *     helmet (IC2 item tier &gt;= 2, the GregTech MV gate); without the helmet the drink just
- *     grants the vanilla +2000 blood as usual.</li>
+ *     (see CreatureUtilMixin); instead they periodically sparkle, a nod to a certain saga.</li>
+ * <li>Ascension: Lilith, ever the experimenter, has adapted Thaumcraft's art of warding against the sun.
+ *     Hand her a Wand Focus: Warding while at vampire level 10 and she weaves its secret into your blood,
+ *     raising you to level 11 (see EntityLilithMixin).</li>
  * </ul>
- * All mod interaction is reflective so no GregTech/IC2 compile dependency is needed.
+ * Thaumcraft interaction is reflective so there is no compile dependency.
  */
 public class VampireTweaksHandler {
 
     public static final VampireTweaksHandler INSTANCE = new VampireTweaksHandler();
 
     private static final Logger LOG = LogManager.getLogger("WitcheryExtras");
+
+    private static final String FOCUS_WARDING_CLASS = "thaumcraft.common.items.wands.foci.ItemFocusWarding";
 
     private static final int BLOOD_PER_FOOD_VANILLA = 5;
     private static final int BLOOD_PER_FOOD_CREDIT = BLOOD_PER_FOOD_VANILLA - 1;
@@ -44,42 +46,14 @@ public class VampireTweaksHandler {
 
     private final WeakHashMap<EntityPlayer, int[]> state = new WeakHashMap<>();
 
-    private boolean ic2MissingLogged = false;
+    private boolean focusClassMissingLogged = false;
 
     /**
      * Twilight Vampire: vampire level 11 ("level 11" is the Twilight tier; see ExtendedPlayerLevelMixin).
      */
     public boolean isTwilightVampire(EntityPlayer player) {
         ExtendedPlayer ex = ExtendedPlayer.get(player);
-        if (ex == null || ex.getVampireLevel() < 11 || player.capabilities.isCreativeMode) {
-            return false;
-        }
-        ItemStack helmet = player.inventory.armorItemInSlot(3);
-        if (helmet == null) {
-            return false;
-        }
-        Item item = helmet.getItem();
-        if (item == null) {
-            return false;
-        }
-        try {
-            Class<?> electricItem = Class.forName("ic2.api.item.IElectricItem");
-            if (!electricItem.isInstance(item)) {
-                return false;
-            }
-            Method getTier = electricItem.getMethod("getTier");
-            Object tier = getTier.invoke(item);
-            return tier instanceof Number && ((Number) tier).intValue() >= 2;
-        } catch (ClassNotFoundException e) {
-            if (!ic2MissingLogged) {
-                ic2MissingLogged = true;
-                LOG.warn("WitcheryExtras: IC2 API not found, Twilight Vampire gate disabled");
-            }
-            return false;
-        } catch (ReflectiveOperationException | RuntimeException e) {
-            LOG.warn("WitcheryExtras: Twilight Vampire tier check failed", e);
-            return false;
-        }
+        return ex != null && ex.getVampireLevel() >= 11 && !player.capabilities.isCreativeMode;
     }
 
     @SubscribeEvent
@@ -122,44 +96,49 @@ public class VampireTweaksHandler {
     }
 
     /**
-     * Grants Twilight tier (level 11) to a level-10 vampire drinking Lilith's Blood while wearing an
-     * MV-or-better electric helmet. Returns true if the tier was granted; if false the caller should
-     * let the vanilla drink logic proceed (+2000 blood).
+     * Lilith's warding quest: a level-10 vampire who hands her the Wand Focus: Warding ascends to
+     * level 11. Returns true if the interaction was handled (caller must cancel the vanilla
+     * enchant-item fallback); the focus is only consumed on success.
      */
-    public boolean tryGrantTwilightTier(EntityPlayer player) {
-        ExtendedPlayer ex = ExtendedPlayer.get(player);
-        if (ex == null || player.worldObj.isRemote || player.capabilities.isCreativeMode) {
+    public boolean tryLilithWardingQuest(EntityPlayer player) {
+        if (player.worldObj.isRemote || player.capabilities.isCreativeMode) {
             return false;
         }
-        if (ex.getVampireLevel() != 10 || !isTwilightHelmetWorn(player)) {
+        ItemStack held = player.getHeldItem();
+        if (held == null || !isFocusWarding(held)) {
             return false;
+        }
+        ExtendedPlayer ex = ExtendedPlayer.get(player);
+        if (ex == null || !ex.isVampire()) {
+            ChatUtil.sendTranslated(EnumChatFormatting.DARK_PURPLE, player, "witcheryextras.lilith.warding.notvampire", new Object[0]);
+            return true;
+        }
+        if (ex.getVampireLevel() < 10) {
+            ChatUtil.sendTranslated(EnumChatFormatting.DARK_PURPLE, player, "witcheryextras.lilith.warding.notready", new Object[0]);
+            return true;
+        }
+        if (held.stackSize <= 1) {
+            player.setCurrentItemOrArmor(0, null);
+        } else {
+            held.stackSize--;
         }
         ex.setVampireLevel(11);
-        LOG.info("WitcheryExtras: {} has become a Twilight Vampire (level 11)", player.getCommandSenderName());
+        ChatUtil.sendTranslated(EnumChatFormatting.LIGHT_PURPLE, player, "witcheryextras.lilith.warding.ascended", new Object[0]);
         ParticleEffect.INSTANT_SPELL.send(SoundEffect.RANDOM_LEVELUP, player, 1.0D, 2.0D, 64);
+        LOG.info("WitcheryExtras: {} has become a Twilight Vampire (level 11) via Lilith's warding quest",
+            player.getCommandSenderName());
         return true;
     }
 
-    private boolean isTwilightHelmetWorn(EntityPlayer player) {
-        ItemStack helmet = player.inventory.armorItemInSlot(3);
-        if (helmet == null) {
-            return false;
-        }
-        Item item = helmet.getItem();
-        if (item == null) {
-            return false;
-        }
+    private boolean isFocusWarding(ItemStack stack) {
         try {
-            Class<?> electricItem = Class.forName("ic2.api.item.IElectricItem");
-            if (!electricItem.isInstance(item)) {
-                return false;
-            }
-            Method getTier = electricItem.getMethod("getTier");
-            Object tier = getTier.invoke(item);
-            return tier instanceof Number && ((Number) tier).intValue() >= 2;
+            Class<?> focusClass = Class.forName(FOCUS_WARDING_CLASS);
+            return focusClass.isInstance(stack.getItem());
         } catch (ClassNotFoundException e) {
-            return false;
-        } catch (ReflectiveOperationException | RuntimeException e) {
+            if (!focusClassMissingLogged) {
+                focusClassMissingLogged = true;
+                LOG.warn("WitcheryExtras: Thaumcraft not found, Lilith's warding quest disabled");
+            }
             return false;
         }
     }

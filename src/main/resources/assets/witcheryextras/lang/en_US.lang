@@ -11,3 +11,7 @@ gui.witcheryextras.distilleryidle.title=Distillery
 gui.witcheryextras.spinningwheel.title=Spinning Wheel
 gui.witcheryextras.witchesoven.title=Witches Oven
 gui.witcheryextras.leonardsurn.title=Leonard's Urn
+
+witcheryextras.lilith.warding.notvampire=Lilith turns the focus over in her hands. "Warding is the art of turning harm away, little one... but you have no blood for me to teach. Come back when you have known the long night."
+witcheryextras.lilith.warding.notready=Lilith smiles faintly. "So you wish to master my warding? I have spent centuries bending this craft to hold the sun's curse at bay. Bring me this focus when your blood has drunk deep of ten nights, and I will show you what I have learned."
+witcheryextras.lilith.warding.ascended=Lilith traces the focus across your brow, whispering words of warding. "The sun wound you no longer. Walk beneath its gaze, child of the night - and sparkle a little, it angers the hunters." Your blood shudders and deepens. (Vampire level 11 attained - Twilight Vampire)
