@@ -40,7 +40,11 @@ public enum Mixins implements IMixins {
                     "witchery.BlockAltarMixin",
                     "witchery.ItemLeonardsUrnMixin",
                     "witchery.EntityVillagerWereMixin",
-                    "witchery.CreatureUtilMixin")
+                    "witchery.CreatureUtilMixin",
+                    "witchery.ExtendedPlayerLevelMixin",
+                    "witchery.ExtendedPlayerVampirePowerMixin",
+                    "witchery.ShapeshiftMixin",
+                    "witchery.ItemGeneralLilithMixin")
             .addClientMixins("witchery.ItemBrewMixin")
             .setPhase(Phase.LATE)),
     WITCHERY_NEI_CONFIG(new MixinBuilder()
