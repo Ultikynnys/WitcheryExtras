@@ -11,26 +11,25 @@ import org.apache.logging.log4j.Logger;
 
 import com.emoniph.witchery.common.ExtendedPlayer;
 import com.emoniph.witchery.util.ChatUtil;
-
-import alkalus.main.core.WitcheryUpgradeHelper;
-import alkalus.main.core.WitcheryUpgrades;
 import com.emoniph.witchery.util.ParticleEffect;
 import com.emoniph.witchery.util.SoundEffect;
 
+import alkalus.main.core.WitcheryUpgradeHelper;
+import alkalus.main.core.WitcheryUpgrades;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 
 /**
  * Vampire quality-of-life rebalance (server side):
  * <ul>
- * <li>Hunger costs 1 blood per food point instead of 5: stock GenericEvents drains 5 blood per restored
- *     food point; we credit 4 back per point so the net cost becomes 1.</li>
+ * <li>Hunger costs 1 blood per food point instead of 5: stock GenericEvents drains 5 blood per restored food point; we
+ * credit 4 back per point so the net cost becomes 1.</li>
  * <li>Passive blood regeneration while fed, scaling with vampire level (Tier reward).</li>
- * <li>Vampire level 11 - "Twilight Vampire": sunlight no longer drains, debuffs or burns them
- *     (see CreatureUtilMixin); instead they periodically sparkle, a nod to a certain saga.</li>
- * <li>Ascension: Lilith, ever the experimenter, has adapted Thaumcraft's art of warding against the sun.
- *     Hand her a Wand Focus: Warding while at vampire level 10 and she weaves its secret into your blood,
- *     raising you to level 11 (see EntityLilithMixin).</li>
+ * <li>Vampire level 11 - "Twilight Vampire": sunlight no longer drains, debuffs or burns them (see CreatureUtilMixin);
+ * instead they periodically sparkle, a nod to a certain saga.</li>
+ * <li>Ascension: Lilith, ever the experimenter, has adapted Thaumcraft's art of warding against the sun. Hand her a
+ * Wand Focus: Warding while at vampire level 10 and she weaves its secret into your blood, raising you to level 11 (see
+ * EntityLilithMixin).</li>
  * </ul>
  * Thaumcraft interaction is reflective so there is no compile dependency.
  */
@@ -52,9 +51,9 @@ public class VampireTweaksHandler {
     private boolean focusClassMissingLogged = false;
 
     /**
-     * Twilight Vampire: the Twilight upgrade flag, earned at vampire level 10 via Lilith's warding
-     * quest. The central gate enforces the level >= 10 floor and excludes hybrids, so the flag
-     * alone never activates the perk on a re-infected or mixed-bloodline player.
+     * Twilight Vampire: the Twilight upgrade flag, earned at vampire level 10 via Lilith's warding quest. The central
+     * gate enforces the level >= 10 floor and excludes hybrids, so the flag alone never activates the perk on a
+     * re-infected or mixed-bloodline player.
      */
     public boolean isTwilightVampire(EntityPlayer player) {
         ExtendedPlayer ex = ExtendedPlayer.get(player);
@@ -97,16 +96,20 @@ public class VampireTweaksHandler {
         }
 
         // Twilight vampires sparkle in direct sunlight instead of suffering.
-        if (player.ticksExisted % 40 == 0 && isTwilightVampire(player) && player.worldObj.isDaytime() && player.worldObj
-            .canBlockSeeTheSky((int) player.posX, (int) (player.posY + player.height + 1), (int) player.posZ)) {
+        if (player.ticksExisted % 40 == 0 && isTwilightVampire(player)
+                && player.worldObj.isDaytime()
+                && player.worldObj.canBlockSeeTheSky(
+                        (int) player.posX,
+                        (int) (player.posY + player.height + 1),
+                        (int) player.posZ)) {
             ParticleEffect.INSTANT_SPELL.send(SoundEffect.NONE, player, 0.4D, 1.0D, 32);
         }
     }
 
     /**
-     * Lilith's warding quest: a level-10 vampire who hands her the Wand Focus: Warding ascends to
-     * level 11. Returns true if the interaction was handled (caller must cancel the vanilla
-     * enchant-item fallback); the focus is only consumed on success.
+     * Lilith's warding quest: a level-10 vampire who hands her the Wand Focus: Warding ascends to level 11. Returns
+     * true if the interaction was handled (caller must cancel the vanilla enchant-item fallback); the focus is only
+     * consumed on success.
      */
     public boolean tryLilithWardingQuest(EntityPlayer player) {
         if (player.worldObj.isRemote || player.capabilities.isCreativeMode) {
@@ -118,15 +121,27 @@ public class VampireTweaksHandler {
         }
         ExtendedPlayer ex = ExtendedPlayer.get(player);
         if (ex == null || !ex.isVampire()) {
-            ChatUtil.sendTranslated(EnumChatFormatting.DARK_PURPLE, player, "witcheryextras.lilith.warding.notvampire", new Object[0]);
+            ChatUtil.sendTranslated(
+                    EnumChatFormatting.DARK_PURPLE,
+                    player,
+                    "witcheryextras.lilith.warding.notvampire",
+                    new Object[0]);
             return true;
         }
         if (ex.getVampireLevel() < 10) {
-            ChatUtil.sendTranslated(EnumChatFormatting.DARK_PURPLE, player, "witcheryextras.lilith.warding.notready", new Object[0]);
+            ChatUtil.sendTranslated(
+                    EnumChatFormatting.DARK_PURPLE,
+                    player,
+                    "witcheryextras.lilith.warding.notready",
+                    new Object[0]);
             return true;
         }
         if (ex.getWerewolfLevel() > 0) {
-            ChatUtil.sendTranslated(EnumChatFormatting.DARK_PURPLE, player, "witcheryextras.lilith.warding.hybrid", new Object[0]);
+            ChatUtil.sendTranslated(
+                    EnumChatFormatting.DARK_PURPLE,
+                    player,
+                    "witcheryextras.lilith.warding.hybrid",
+                    new Object[0]);
             return true;
         }
         if (held.stackSize <= 1) {
@@ -136,10 +151,16 @@ public class VampireTweaksHandler {
         }
         ((WitcheryUpgradeHelper) ex).witcheryExtras$setTwilight(true);
         ex.setVampireLevel(ex.getVampireLevel() + 1);
-        ChatUtil.sendTranslated(EnumChatFormatting.LIGHT_PURPLE, player, "witcheryextras.lilith.warding.ascended", new Object[0]);
+        ChatUtil.sendTranslated(
+                EnumChatFormatting.LIGHT_PURPLE,
+                player,
+                "witcheryextras.lilith.warding.ascended",
+                new Object[0]);
         ParticleEffect.INSTANT_SPELL.send(SoundEffect.RANDOM_LEVELUP, player, 1.0D, 2.0D, 64);
-        LOG.info("WitcheryExtras: {} has become a Twilight Vampire (level {}) via Lilith's warding quest",
-            player.getCommandSenderName(), ex.getVampireLevel());
+        LOG.info(
+                "WitcheryExtras: {} has become a Twilight Vampire (level {}) via Lilith's warding quest",
+                player.getCommandSenderName(),
+                ex.getVampireLevel());
         return true;
     }
 
