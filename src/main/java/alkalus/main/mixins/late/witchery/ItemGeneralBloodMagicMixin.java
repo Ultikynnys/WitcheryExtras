@@ -22,7 +22,9 @@ import alkalus.main.handlers.BloodMagicTierHandler;
 @Mixin(value = ItemGeneral.class, priority = 1500)
 public abstract class ItemGeneralBloodMagicMixin {
 
-    @Inject(method = "onEaten", at = @At("HEAD"), cancellable = true, remap = false)
+    // onEaten overrides Item.func_77654_b, so at runtime the method carries the SRG name;
+    // remap = true lets the mixin resolve dev name -> SRG via the refmap.
+    @Inject(method = "onEaten", at = @At("HEAD"), cancellable = true)
     private void witcheryextras$bloodMagicAscension(ItemStack itemstack, World world, EntityPlayer player,
             CallbackInfo ci) {
         if (itemstack == null || itemstack.getItemDamage() != 164) {
