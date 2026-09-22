@@ -5,6 +5,9 @@ import java.util.WeakHashMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.MathHelper;
+import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
+import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,6 +19,7 @@ import com.emoniph.witchery.util.SoundEffect;
 
 import alkalus.main.core.WitcheryUpgradeHelper;
 import alkalus.main.core.WitcheryUpgrades;
+import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 
@@ -184,5 +188,58 @@ public class VampireTweaksHandler {
             state.put(player, s);
         }
         return s;
+    }
+
+    /**
+     * Twilight vampires sleep in normal beds like everyone else: with sun immunity there is no need to hide, so night
+     * turns into day when they sleep. Witchery's handler blocks sleep in beds at night ("Vampires can only sleep during
+     * the day"); we run AFTER it at LOW priority and, if it rejected the attempt for a Twilight vampire, re-approve it.
+     * Coffins keep working as before.
+     */
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public void onPlayerSleepInBed(PlayerSleepInBedEvent event) {
+        EntityPlayer player = event.entityPlayer;
+        if (player.worldObj.isRemote || event.result != net.minecraft.entity.player.EnumStatus.OTHER_PROBLEM) {
+            return;
+        }
+        if (!isTwilightVampire(player)) {
+            return;
+        }
+        if (player.worldObj.isDaytime()) {
+            return;
+        }
+        event.result = net.minecraft.entity.player.EnumStatus.OK;
+        ChatUtil.sendTranslated(
+                EnumChatFormatting.LIGHT_PURPLE,
+                player,
+                "witcheryextras.twilight.sleep",
+                new Object[0]);
+    }
+
+    /**
+     * When a Twilight vampire wakes from a normal bed at night, fast-forward time to morning - the mirror of Witchery's
+     * coffin wake logic (which rewinds 11000 ticks to day).
+     */
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public void onPlayerWakeUp(PlayerWakeUpEvent event) {
+        if (event.entityPlayer.worldObj.isRemote) {
+            return;
+        }
+        EntityPlayer player = event.entityPlayer;
+        if (!isTwilightVampire(player) || !player.isPlayerFullyAsleep()) {
+            return;
+        }
+        int x = MathHelper.floor_double(player.posX);
+        int y = MathHelper.floor_double(player.posY);
+        int z = MathHelper.floor_double(player.posZ);
+        if (player.worldObj.getBlock(x, y, z) == com.emoniph.witchery.Witchery.Blocks.COFFIN) {
+            return;
+        }
+        net.minecraft.world.World world = player.worldObj;
+        long timeOfDay = world.getWorldTime() % 24000L;
+        if (timeOfDay >= 12000L && timeOfDay < 23459L) {
+            long newTime = world.getWorldTime() - timeOfDay + 23460L;
+            world.setWorldTime(newTime);
+        }
     }
 }
