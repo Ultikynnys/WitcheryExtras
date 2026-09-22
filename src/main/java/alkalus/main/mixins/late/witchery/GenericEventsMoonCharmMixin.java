@@ -13,11 +13,13 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 
 import baubles.api.BaublesApi;
 
+import net.minecraftforge.event.entity.living.LivingEvent;
+
 /**
- * The full-moon shift prevention in GenericEvents.onLivingUpdate checks player.inventory.hasItem(MOON_CHARM); a moon
- * charm sitting in a Baubles charm slot would be invisible to that check and the player would be force-shifted anyway.
- * The redirections OR in a scan of the Baubles inventory. hasItem has no dev name in this environment
- * (InventoryPlayer.func_146026_a at runtime).
+ * The full-moon shift prevention inside GenericEvents.onLivingUpdate checks player.inventory.hasItem(MOON_CHARM)
+ * inline; a moon charm sitting in a Baubles charm slot would be invisible to that check and the player would be
+ * force-shifted anyway. Both checks (force unshift and force shift) are redirected to OR in a scan of the Baubles
+ * inventory.
  */
 @SuppressWarnings("UnusedMixin")
 @Mixin(GenericEvents.class)
@@ -29,11 +31,12 @@ public abstract class GenericEventsMoonCharmMixin {
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/entity/player/InventoryPlayer;hasItem (Lnet/minecraft/item/Item;)Z"))
-    private boolean witcheryextras$moonCharmInBaubles(boolean hasCharmInInventory, EntityPlayer player) {
-        if (hasCharmInInventory) {
-            return true;
+    private boolean witcheryextras$moonCharmInBaubles(boolean hasCharmInInventory,
+            LivingEvent.LivingUpdateEvent event) {
+        if (hasCharmInInventory || !(event.entity instanceof EntityPlayer)) {
+            return hasCharmInInventory;
         }
-        IInventory baubles = BaublesApi.getBaubles(player);
+        IInventory baubles = BaublesApi.getBaubles((EntityPlayer) event.entity);
         if (baubles == null) {
             return false;
         }
