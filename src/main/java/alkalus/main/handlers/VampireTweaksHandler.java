@@ -157,7 +157,9 @@ public class VampireTweaksHandler {
             Method getTier = electricItem.getMethod("getTier");
             Object tier = getTier.invoke(item);
             return tier instanceof Number && ((Number) tier).intValue() >= 2;
-        } catch (ClassNotFoundException | ReflectiveOperationException | RuntimeException e) {
+        } catch (ClassNotFoundException e) {
+            return false;
+        } catch (ReflectiveOperationException | RuntimeException e) {
             return false;
         }
     }

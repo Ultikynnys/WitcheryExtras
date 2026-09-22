@@ -19,7 +19,7 @@ public abstract class ExtendedPlayerVampirePowerMixin {
     private void witcheryextras$clampLevelsIndex(CallbackInfoReturnable<Integer> cir) {
         ExtendedPlayer self = (ExtendedPlayer) (Object) this;
         if (self.getVampireLevel() > 10) {
-            cir.setReturnValue(ExtendedPlayer.VampirePower.levels[10]);
+            cir.setReturnValue(4);
         }
     }
 }
