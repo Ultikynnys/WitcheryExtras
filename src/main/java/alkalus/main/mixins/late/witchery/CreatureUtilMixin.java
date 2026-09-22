@@ -22,7 +22,7 @@ public class CreatureUtilMixin {
 
     @Inject(method = "isInSunlight", at = @At("HEAD"), cancellable = true, remap = false)
     private static void witcheryextras$twilightSunImmunity(EntityLivingBase entity, CallbackInfoReturnable<Boolean> cir) {
-        if (entity instanceof EntityPlayer && VampireTweaksHandler.isTwilightVampire((EntityPlayer) entity)) {
+        if (entity instanceof EntityPlayer && VampireTweaksHandler.INSTANCE.isTwilightVampire((EntityPlayer) entity)) {
             cir.setReturnValue(Boolean.FALSE);
         }
     }
