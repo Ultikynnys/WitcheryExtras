@@ -5,6 +5,7 @@ import net.minecraft.item.ItemStack;
 
 import com.emoniph.witchery.Witchery;
 import com.emoniph.witchery.ritual.RiteRegistry;
+import com.emoniph.witchery.ritual.Sacrifice;
 import com.emoniph.witchery.ritual.SacrificeItem;
 import com.emoniph.witchery.ritual.SacrificeMultiple;
 import com.emoniph.witchery.ritual.SacrificePower;
