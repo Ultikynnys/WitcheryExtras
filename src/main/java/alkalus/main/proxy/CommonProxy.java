@@ -3,7 +3,6 @@ package alkalus.main.proxy;
 import net.minecraftforge.common.MinecraftForge;
 
 import alkalus.main.core.WitcheryExtras;
-import alkalus.main.handlers.BloodMagicTierHandler;
 import alkalus.main.handlers.ServerSizeHandler;
 import alkalus.main.handlers.WeremanRiteRegistrar;
 import alkalus.main.mixins.hooks.EntitySizeManager;

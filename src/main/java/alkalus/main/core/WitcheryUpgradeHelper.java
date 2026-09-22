@@ -1,8 +1,8 @@
 package alkalus.main.core;
 
 /**
- * Duck interface mixed onto ExtendedPlayer by ExtendedPlayerUpgradesMixin; access the
- * player's earned WitcheryExtras upgrade flags through it.
+ * Duck interface mixed onto ExtendedPlayer by ExtendedPlayerUpgradesMixin; access the player's earned WitcheryExtras
+ * upgrade flags through it.
  */
 public interface WitcheryUpgradeHelper {
 

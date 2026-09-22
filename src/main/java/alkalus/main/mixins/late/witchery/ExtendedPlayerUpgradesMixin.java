@@ -16,12 +16,11 @@ import com.emoniph.witchery.common.ExtendedPlayer;
 import alkalus.main.core.WitcheryUpgradeHelper;
 
 /**
- * Post-10 progression is upgrade-flag based: each earned upgrade (Twilight, Blood Magic,
- * Wereman) adds +1 to the effective level, in any order. The stock level field still holds
- * the 0-10 quest ladder; flags carry everything beyond it.
+ * Post-10 progression is upgrade-flag based: each earned upgrade (Twilight, Blood Magic, Wereman) adds +1 to the
+ * effective level, in any order. The stock level field still holds the 0-10 quest ladder; flags carry everything beyond
+ * it.
  * <ul>
- * <li>{@code setVampireLevel} cap 10 -&gt; 12, {@code setWerewolfLevel} cap 10 -&gt; 11 (the
- *     Wereman upgrade).</li>
+ * <li>{@code setVampireLevel} cap 10 -&gt; 12, {@code setWerewolfLevel} cap 10 -&gt; 11 (the Wereman upgrade).</li>
  * <li>NBT load clamps raised to match, and the upgrade flags persisted alongside.</li>
  * </ul>
  */
@@ -101,7 +100,11 @@ public abstract class ExtendedPlayerUpgradesMixin implements WitcheryUpgradeHelp
         return 11;
     }
 
-    @ModifyConstant(method = "loadNBTData", constant = @Constant(intValue = 10, ordinal = -1), require = 0, remap = false)
+    @ModifyConstant(
+            method = "loadNBTData",
+            constant = @Constant(intValue = 10, ordinal = -1),
+            require = 0,
+            remap = false)
     private int witcheryextras$nbtClamps(int original) {
         return 12;
     }

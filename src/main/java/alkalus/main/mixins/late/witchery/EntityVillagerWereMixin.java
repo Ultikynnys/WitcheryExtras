@@ -10,11 +10,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.emoniph.witchery.entity.EntityVillagerWere;
 
 /**
- * Makes naturally-occurring were-villagers infectious, so their wolfman form can
- * spread lycanthropy to players and other villagers on a full moon. In stock
- * Witchery 0.24.1 this flag is only granted via the silvered beartrap ritual;
- * werewolves converted from regular villagers (natural worldgen) always spawn
- * non-infectious and can never pass the curse on.
+ * Makes naturally-occurring were-villagers infectious, so their wolfman form can spread lycanthropy to players and
+ * other villagers on a full moon. In stock Witchery 0.24.1 this flag is only granted via the silvered beartrap ritual;
+ * werewolves converted from regular villagers (natural worldgen) always spawn non-infectious and can never pass the
+ * curse on.
  */
 @SuppressWarnings("UnusedMixin")
 @Mixin(EntityVillagerWere.class)

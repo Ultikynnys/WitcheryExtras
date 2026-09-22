@@ -18,9 +18,9 @@ import alkalus.main.core.WitcheryUpgradeHelper;
 import alkalus.main.core.WitcheryUpgrades;
 
 /**
- * Rite of the Wereman: the werewolf post-10 upgrade. Performed at werewolf level 10 while
- * shifted into the wolfman form; grants the Wereman upgrade (+1 level), letting the player
- * hold items and wear armor in wolfman form while keeping their powers.
+ * Rite of the Wereman: the werewolf post-10 upgrade. Performed at werewolf level 10 while shifted into the wolfman
+ * form; grants the Wereman upgrade (+1 level), letting the player hold items and wear armor in wolfman form while
+ * keeping their powers.
  */
 public class RiteOfTheWereman extends Rite {
 
@@ -36,7 +36,8 @@ public class RiteOfTheWereman extends Rite {
         }
 
         @Override
-        public RitualStep.Result process(World world, int posX, int posY, int posZ, long ticks, BlockCircle.TileEntityCircle.ActivatedRitual ritual) {
+        public RitualStep.Result process(World world, int posX, int posY, int posZ, long ticks,
+                BlockCircle.TileEntityCircle.ActivatedRitual ritual) {
             if (world.isRemote) {
                 return RitualStep.Result.COMPLETED;
             }
@@ -49,16 +50,28 @@ public class RiteOfTheWereman extends Rite {
             }
             ExtendedPlayer ex = ExtendedPlayer.get(player);
             if (ex == null || !WitcheryUpgrades.canUseWerewolfUpgrade(player)) {
-                ChatUtil.sendTranslated(EnumChatFormatting.DARK_PURPLE, player, "witcheryextras.rite.wereman.refused", new Object[0]);
+                ChatUtil.sendTranslated(
+                        EnumChatFormatting.DARK_PURPLE,
+                        player,
+                        "witcheryextras.rite.wereman.refused",
+                        new Object[0]);
                 return RitualStep.Result.ABORTED_REFUND;
             }
             WitcheryUpgradeHelper we = (WitcheryUpgradeHelper) ex;
             if (we.witcheryExtras$isWereman()) {
-                ChatUtil.sendTranslated(EnumChatFormatting.DARK_PURPLE, player, "witcheryextras.rite.wereman.already", new Object[0]);
+                ChatUtil.sendTranslated(
+                        EnumChatFormatting.DARK_PURPLE,
+                        player,
+                        "witcheryextras.rite.wereman.already",
+                        new Object[0]);
                 return RitualStep.Result.COMPLETED;
             }
             if (ex.getWerewolfLevel() < 10) {
-                ChatUtil.sendTranslated(EnumChatFormatting.DARK_PURPLE, player, "witcheryextras.rite.wereman.notready", new Object[0]);
+                ChatUtil.sendTranslated(
+                        EnumChatFormatting.DARK_PURPLE,
+                        player,
+                        "witcheryextras.rite.wereman.notready",
+                        new Object[0]);
                 return RitualStep.Result.ABORTED_REFUND;
             }
             if (player.getEntityData().getBoolean("WitcheryExtrasWeremanPending")) {
@@ -66,17 +79,29 @@ public class RiteOfTheWereman extends Rite {
                 we.witcheryExtras$setWereman(true);
                 ex.setWerewolfLevel(ex.getWerewolfLevel() + 1);
                 player.getEntityData().setBoolean("WitcheryExtrasWeremanPending", false);
-                ChatUtil.sendTranslated(EnumChatFormatting.LIGHT_PURPLE, player, "witcheryextras.rite.wereman.completed", new Object[0]);
+                ChatUtil.sendTranslated(
+                        EnumChatFormatting.LIGHT_PURPLE,
+                        player,
+                        "witcheryextras.rite.wereman.completed",
+                        new Object[0]);
                 ParticleEffect.INSTANT_SPELL.send(SoundEffect.RANDOM_LEVELUP, player, 1.0D, 2.0D, 64);
                 return RitualStep.Result.COMPLETED;
             }
             // first stage: require the shift into wolfman form within the circle
             if (ex.getCreatureType() != com.emoniph.witchery.util.TransformCreature.WOLFMAN) {
-                ChatUtil.sendTranslated(EnumChatFormatting.DARK_PURPLE, player, "witcheryextras.rite.wereman.shift", new Object[0]);
+                ChatUtil.sendTranslated(
+                        EnumChatFormatting.DARK_PURPLE,
+                        player,
+                        "witcheryextras.rite.wereman.shift",
+                        new Object[0]);
                 return RitualStep.Result.ABORTED_REFUND;
             }
             player.getEntityData().setBoolean("WitcheryExtrasWeremanPending", true);
-            ChatUtil.sendTranslated(EnumChatFormatting.DARK_PURPLE, player, "witcheryextras.rite.wereman.stage2", new Object[0]);
+            ChatUtil.sendTranslated(
+                    EnumChatFormatting.DARK_PURPLE,
+                    player,
+                    "witcheryextras.rite.wereman.stage2",
+                    new Object[0]);
             return RitualStep.Result.STARTING;
         }
     }

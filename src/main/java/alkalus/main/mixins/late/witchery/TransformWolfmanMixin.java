@@ -13,11 +13,10 @@ import com.emoniph.witchery.common.ExtendedPlayer;
 import com.emoniph.witchery.entity.EntityWolfman;
 
 /**
- * Copies the player's armor slots onto the wolfman render proxy. Stock code only copies the
- * held item, so RenderWolfman's per-section armor passes (head/chest/arms/legs) never fire and
- * armor is invisible on transformed players. A level-11 werewolf (Wereman upgrade) gets the
- * four-part swap: helmet renders on the head, chestplate on body+arms, leggings/boots on the
- * wolf legs. Other players keep stock behavior.
+ * Copies the player's armor slots onto the wolfman render proxy. Stock code only copies the held item, so
+ * RenderWolfman's per-section armor passes (head/chest/arms/legs) never fire and armor is invisible on transformed
+ * players. A level-11 werewolf (Wereman upgrade) gets the four-part swap: helmet renders on the head, chestplate on
+ * body+arms, leggings/boots on the wolf legs. Other players keep stock behavior.
  */
 @SuppressWarnings("UnusedMixin")
 @Mixin(TransformWolfman.class)
@@ -27,7 +26,8 @@ public abstract class TransformWolfmanMixin {
     private EntityWolfman proxyEntity;
 
     @Inject(method = "syncModelWith", at = @At("TAIL"), remap = false)
-    private void witcheryextras$syncArmor(net.minecraft.entity.EntityLivingBase entity, boolean frontface, CallbackInfo ci) {
+    private void witcheryextras$syncArmor(net.minecraft.entity.EntityLivingBase entity, boolean frontface,
+            CallbackInfo ci) {
         if (!(entity instanceof EntityPlayer) || this.proxyEntity == null) {
             return;
         }
