@@ -45,7 +45,9 @@ public enum Mixins implements IMixins {
                     "witchery.ItemWolfTokenMixin",
                     "witchery.WerewolfEffectsMixin",
                     "witchery.GenericEventsSleepMixin",
-                    "witchery.GenericEventsMoonCharmMixin")
+                    "witchery.GenericEventsMoonCharmMixin",
+                    "witchery.CreatureUtilMixin",
+                    "witchery.EntityLilithMixin")
             .addClientMixins(
                     "witchery.ItemBrewMixin",
                     "witchery.TransformWolfmanMixin",
