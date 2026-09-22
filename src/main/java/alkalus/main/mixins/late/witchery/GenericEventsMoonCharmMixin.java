@@ -3,6 +3,7 @@ package alkalus.main.mixins.late.witchery;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.event.entity.living.LivingEvent;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -12,8 +13,6 @@ import com.emoniph.witchery.common.GenericEvents;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 
 import baubles.api.BaublesApi;
-
-import net.minecraftforge.event.entity.living.LivingEvent;
 
 /**
  * The full-moon shift prevention inside GenericEvents.onLivingUpdate checks player.inventory.hasItem(MOON_CHARM)
