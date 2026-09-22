@@ -199,7 +199,7 @@ public class VampireTweaksHandler {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onPlayerSleepInBed(PlayerSleepInBedEvent event) {
         EntityPlayer player = event.entityPlayer;
-        if (player.worldObj.isRemote || event.result != net.minecraft.entity.player.EnumStatus.OTHER_PROBLEM) {
+        if (player.worldObj.isRemote || event.result != EntityPlayer.EnumStatus.OTHER_PROBLEM) {
             return;
         }
         if (!isTwilightVampire(player)) {
@@ -208,7 +208,7 @@ public class VampireTweaksHandler {
         if (player.worldObj.isDaytime()) {
             return;
         }
-        event.result = net.minecraft.entity.player.EnumStatus.OK;
+        event.result = EntityPlayer.EnumStatus.OK;
         ChatUtil.sendTranslated(
                 EnumChatFormatting.LIGHT_PURPLE,
                 player,
