@@ -6,6 +6,8 @@ package alkalus.main.core;
  */
 public interface WitcheryUpgradeHelper {
 
+    int WE_MIN_LEVEL_FOR_UPGRADES = 10;
+
     boolean witcheryExtras$isTwilight();
 
     boolean witcheryExtras$isBloodMagic();
