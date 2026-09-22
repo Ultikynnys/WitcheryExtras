@@ -11,17 +11,17 @@ import com.emoniph.witchery.util.ChatUtil;
 import com.emoniph.witchery.util.ParticleEffect;
 import com.emoniph.witchery.util.SoundEffect;
 
-import WayofTime.alchemicalWizardry.api.event.SacrificeKnifeUsedEvent;
 import alkalus.main.core.WitcheryUpgradeHelper;
 import alkalus.main.core.WitcheryUpgrades;
-import cpw.mods.fml.common.eventhandler.EventPriority;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
 /**
  * Vampire Blood Magic upgrade (level 12 tier). A level-10+ pure-bloodline vampire who drinks Lilith's Blood a second
  * time (after the Twilight ascension) gains a Blood Magic affinity: the sacrifice dagger drains their witchery blood
  * reserve at 25 blood per HP instead of the stock 100 (which stock Witchery enforces by cancelling the health drain
- * entirely). Registered on the forge bus at LOW priority so it runs after Witchery's own handler.
+ * entirely).
+ * <p>
+ * The {@code SacrificeKnifeUsedEvent} listener lives in {@link BloodMagicEventListener} and is only loaded when Blood
+ * Magic is present, so this class never references it directly.
  */
 public class BloodMagicTierHandler {
 
@@ -29,8 +29,31 @@ public class BloodMagicTierHandler {
 
     private static final Logger LOG = LogManager.getLogger("WitcheryExtras");
 
-    private static final int STOCK_BLOOD_PER_HP = 100;
-    private static final int TIER_BLOOD_PER_HP = 25;
+    public static final int STOCK_BLOOD_PER_HP = 100;
+    public static final int TIER_BLOOD_PER_HP = 25;
+
+    /**
+     * Registers the Blood Magic event listener if (and only if) Blood Magic is loaded. Called from init.
+     */
+    public static void registerEventListener() {
+        try {
+            Class.forName("WayofTime.alchemicalWizardry.api.event.SacrificeKnifeUsedEvent");
+            Class<?> listener = Class.forName("alkalus.main.handlers.BloodMagicEventListener");
+            try {
+                listener.getField("INSTANCE");
+            } catch (NoSuchFieldException e) {
+                // fall through to newInstance
+            }
+            Object instance = listener.getField("INSTANCE") != null ? listener.getField("INSTANCE").get(null)
+                    : listener.newInstance();
+            net.minecraftforge.common.MinecraftForge.EVENT_BUS.register(instance);
+            LOG.info("WitcheryExtras: Blood Magic detected, Blood Magic tier listener active");
+        } catch (ClassNotFoundException e) {
+            LOG.info("WitcheryExtras: Blood Magic not present, Blood Magic tier listener disabled");
+        } catch (ReflectiveOperationException | RuntimeException e) {
+            LOG.warn("WitcheryExtras: failed to register Blood Magic tier listener", e);
+        }
+    }
 
     /**
      * Grants the Blood Magic affinity: a Twilight vampire (level 11, Twilight flag set) who drinks Lilith's Blood again

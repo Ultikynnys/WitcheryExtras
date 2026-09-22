@@ -27,7 +27,7 @@ public class CommonProxy {
         MinecraftForge.EVENT_BUS.register(new EntitySizeManager());
         MinecraftForge.EVENT_BUS.register(new WerewolfRestrictionHandler());
         MinecraftForge.EVENT_BUS.register(new ModdedSheepLootHandler());
-        MinecraftForge.EVENT_BUS.register(BloodMagicTierHandler.INSTANCE);
+        BloodMagicTierHandler.registerEventListener();
         WitcheryExtras.NETWORK
                 .registerMessage(EntitySizeSyncPacket.Handler.class, EntitySizeSyncPacket.class, 0, Side.CLIENT);
         WitcheryExtras.NETWORK.registerMessage(PacketToggleForm.Handler.class, PacketToggleForm.class, 1, Side.SERVER);
