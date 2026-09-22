@@ -15,6 +15,7 @@ gui.witcheryextras.leonardsurn.title=Leonard's Urn
 witcheryextras.upgrade.twilight=Twilight Vampire attained
 witcheryextras.upgrade.bloodmagic=Blood Magic affinity attained
 witcheryextras.upgrade.wereman=Wereman attained
+witcheryextras.wolf.restricted=Your wolf form cannot hold this!
 witchery.rite.wereman.name=Rite of the Wereman
 witchery.rite.wereman.desc=After reaching the limits of the werewolf form, your arcane knowledge has given you insights into improving your abilities further. With this rite you may hold items as a wereman and wear armor, as your body adapts to fit the armor, while still keeping your powers. Perform it at werewolf level 10, under the night sky, while shifted into the wolfman form.
 witcheryextras.rite.wereman.refused=The spirits reject you. Only a werewolf of the tenth night, untouched by vampiric blood, may attempt this rite.

@@ -15,6 +15,7 @@ gui.witcheryextras.leonardsurn.title=Leonard's Urn
 witcheryextras.upgrade.twilight=获得暮光吸血鬼
 witcheryextras.upgrade.bloodmagic=获得血魔法亲和
 witcheryextras.upgrade.wereman=获得狼人形态
+witcheryextras.wolf.restricted=你的狼形态无法持有此物!
 witchery.rite.wereman.name=狼人礼仪
 witchery.rite.wereman.desc=当你到达狼人形态的极限时,你的神秘学知识让你洞悉了进一步提升能力的方法。完成此礼仪后,你在狼人形态下可以手持物品、穿戴盔甲——你的身体会适应盔甲,同时保留全部力量。需在狼人等级 10 级、夜晚、且已变身为狼人形态时进行。
 witcheryextras.rite.wereman.refused=精魂拒绝了你。只有度过了第十夜的纯血狼人才能尝试此礼仪。
