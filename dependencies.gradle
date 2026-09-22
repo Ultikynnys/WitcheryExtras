@@ -6,6 +6,9 @@ dependencies {
 	api(rfg.deobf("curse.maven:witchery-69673:2234410"))
     compileOnly('com.github.GTNewHorizons:Baubles-Expanded:2.2.22-GTNH:dev')
 
+    // Blood Magic: compile against the shipped jar; provided at runtime by GTNH
+    compileOnly(files('libs/BloodMagic-1.7.52.jar'))
+
     // Uncomment to test baubles compat
     //devOnlyNonPublishable('com.github.GTNewHorizons:Baubles-Expanded:2.2.22-GTNH:dev')
 }
