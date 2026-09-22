@@ -86,23 +86,4 @@ public class BloodMagicTierHandler {
                 ex.getVampireLevel());
         return true;
     }
-
-    @SubscribeEvent(priority = EventPriority.LOW)
-    public void onSacrificeKnifeUsed(SacrificeKnifeUsedEvent event) {
-        EntityPlayer player = event.player;
-        if (player == null || player.worldObj.isRemote || !WitcheryUpgrades.canUseVampireUpgrade(player)) {
-            return;
-        }
-        ExtendedPlayer ex = ExtendedPlayer.get(player);
-        if (ex == null || !((WitcheryUpgradeHelper) ex).witcheryExtras$isBloodMagic()) {
-            return;
-        }
-        // Witchery's handler already cancelled the health drain and charged 100/HP.
-        // Rebate the difference so the tier pays 25/HP.
-        int rebate = (int) (event.healthDrained * (STOCK_BLOOD_PER_HP - TIER_BLOOD_PER_HP));
-        if (rebate > 0 && ex.getBloodPower() > 0) {
-            ex.increaseBloodPower(Math.min(rebate, ex.getMaxBloodPower() - ex.getBloodPower()));
-            LOG.debug("WitcheryExtras: Blood Magic tier rebate {} blood for {}", rebate, player.getCommandSenderName());
-        }
-    }
 }
