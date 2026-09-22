@@ -42,7 +42,8 @@ public enum Mixins implements IMixins {
                     "witchery.EntityVillagerWereMixin",
                     "witchery.ExtendedPlayerUpgradesMixin",
                     "witchery.ShapeshiftMixin",
-                    "witchery.ItemWolfTokenMixin")
+                    "witchery.ItemWolfTokenMixin",
+                    "witchery.GenericEventsMoonCharmMixin")
             .addClientMixins("witchery.ItemBrewMixin", "witchery.TransformWolfmanMixin")
             .setPhase(Phase.LATE)),
     WITCHERY_NEI_CONFIG(new MixinBuilder()
@@ -53,6 +54,7 @@ public enum Mixins implements IMixins {
             .addCommonMixins(
                     "witchery.BlockWitchDoorMixin_Bauble",
                     "witchery.ItemGeneralMixin_Bauble",
+                    "witchery.ItemMoonCharmMixin_Bauble",
                     "witchery.ItemPoppetMixin_Bauble")
             .addRequiredMod(TargetedMod.BAUBLES_EXPANDED)
             .setPhase(Phase.LATE)),
