@@ -14,11 +14,14 @@ import com.emoniph.witchery.item.ItemWolfToken;
 import com.emoniph.witchery.util.ChatUtil;
 
 import alkalus.main.core.WitcheryUpgradeHelper;
+import alkalus.main.core.WitcheryUpgrades;
 
 /**
  * Creative Bat/Wolf Token level cycling extended past 10: crossing the stock quest ladder
  * grants the WitcheryExtras upgrade flags in a fixed order, so creative tokens still hand out
  * every upgrade. Vampire: Twilight -&gt; Blood Magic. Werewolf: Wereman.
+ * The central {@link WitcheryUpgrades} gate enforces a minimum class level of 10 and excludes
+ * hybrids, so tokens can never bypass those rules.
  */
 @SuppressWarnings("UnusedMixin")
 @Mixin(ItemWolfToken.class)
@@ -41,7 +44,6 @@ public abstract class ItemWolfTokenMixin {
         }
         WitcheryUpgradeHelper we = (WitcheryUpgradeHelper) ex;
         int level;
-        String key;
         if (player.isSneaking()) {
             level = ex.getVampireLevel() + 1;
             if (level > WE_VAMPIRE_CAP) {
@@ -49,12 +51,14 @@ public abstract class ItemWolfTokenMixin {
                 we.witcheryExtras$setTwilight(false);
                 we.witcheryExtras$setBloodMagic(false);
             }
-            if (level == 11) {
-                we.witcheryExtras$setTwilight(true);
-                ChatUtil.sendTranslated(EnumChatFormatting.LIGHT_PURPLE, player, "witcheryextras.upgrade.twilight", new Object[0]);
-            } else if (level == 12) {
-                we.witcheryExtras$setBloodMagic(true);
-                ChatUtil.sendTranslated(EnumChatFormatting.LIGHT_PURPLE, player, "witcheryextras.upgrade.bloodmagic", new Object[0]);
+            if (level > WitcheryUpgrades.MIN_UPGRADE_LEVEL && WitcheryUpgrades.canUseVampireUpgrade(player)) {
+                if (level == 11) {
+                    we.witcheryExtras$setTwilight(true);
+                    ChatUtil.sendTranslated(EnumChatFormatting.LIGHT_PURPLE, player, "witcheryextras.upgrade.twilight", new Object[0]);
+                } else if (level == 12) {
+                    we.witcheryExtras$setBloodMagic(true);
+                    ChatUtil.sendTranslated(EnumChatFormatting.LIGHT_PURPLE, player, "witcheryextras.upgrade.bloodmagic", new Object[0]);
+                }
             }
             ex.setVampireLevel(level);
             ChatUtil.sendTranslated(EnumChatFormatting.GREEN, player, "witchery.vampire.setlevel", new Object[]{Integer.valueOf(level).toString()});
@@ -64,7 +68,7 @@ public abstract class ItemWolfTokenMixin {
                 level = 0;
                 we.witcheryExtras$setWereman(false);
             }
-            if (level == 11) {
+            if (level > WitcheryUpgrades.MIN_UPGRADE_LEVEL && WitcheryUpgrades.canUseWerewolfUpgrade(player)) {
                 we.witcheryExtras$setWereman(true);
                 ChatUtil.sendTranslated(EnumChatFormatting.LIGHT_PURPLE, player, "witcheryextras.upgrade.wereman", new Object[0]);
             }
