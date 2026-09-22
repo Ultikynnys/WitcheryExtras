@@ -7,7 +7,7 @@ import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.emoniph.witchery.item.ItemGeneral;
 
@@ -26,13 +26,13 @@ public abstract class ItemGeneralBloodMagicMixin {
     // dev environments see the MCP name - list both (standard GTNH pattern).
     @Inject(method = { "onEaten", "func_77654_b" }, at = @At("HEAD"), cancellable = true, remap = false)
     private void witcheryextras$bloodMagicAscension(ItemStack itemstack, World world, EntityPlayer player,
-            CallbackInfo ci) {
+            CallbackInfoReturnable<ItemStack> cir) {
         if (itemstack == null || itemstack.getItemDamage() != 164) {
             return;
         }
         if (BloodMagicTierHandler.INSTANCE.tryGrantBloodMagicTier(player)) {
             world.playSoundAtEntity(player, "random.burp", 0.5F, world.rand.nextFloat() * 0.1F + 0.9F);
-            ci.cancel();
+            cir.setReturnValue(itemstack);
         }
     }
 }
