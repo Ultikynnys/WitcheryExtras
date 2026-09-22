@@ -20,6 +20,7 @@ witcheryextras.twilight.sleep=You need not fear the dawn any longer. You sleep s
 witcheryextras.upgrade.bloodmagic=Blood Magic affinity attained
 witcheryextras.upgrade.greaterformcontrol=Greater Form Control attained
 witcheryextras.upgrade.formmastery=Form Mastery attained
+witcheryextras.upgrade.bloodmagic.ritual=The Lilith's Blood ignites in your veins, binding your life fluid to the great Altars. Your sacrifice is now tenfold lighter. (Blood Magic affinity attained)
 witcheryextras.wolf.restricted=Your beast form cannot hold or wear this!
 witchery.rite.greaterformcontrol=Rite of Greater Form Control{r||After reaching the limits of the werewolf form, your arcane knowledge has given you insights into improving your abilities further. With this rite you reshape your paws to resemble hands, letting you finally hold items as a werewolf. This does not carry into the wolf form, where you simply grip the item in your muzzle. Perform it at werewolf level 10, under the night sky, while shifted into the wolfman form.
 witcheryextras.rite.greaterformcontrol.refused=The spirits reject you. Only a werewolf of the tenth night, untouched by vampiric blood, may attempt this rite.

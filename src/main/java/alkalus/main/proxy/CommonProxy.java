@@ -3,6 +3,7 @@ package alkalus.main.proxy;
 import net.minecraftforge.common.MinecraftForge;
 
 import alkalus.main.core.WitcheryExtras;
+import alkalus.main.handlers.BloodMagicTierHandler;
 import alkalus.main.handlers.ModdedSheepLootHandler;
 import alkalus.main.handlers.ServerSizeHandler;
 import alkalus.main.handlers.WeremanRiteRegistrar;
@@ -26,6 +27,7 @@ public class CommonProxy {
         MinecraftForge.EVENT_BUS.register(new EntitySizeManager());
         MinecraftForge.EVENT_BUS.register(new WerewolfRestrictionHandler());
         MinecraftForge.EVENT_BUS.register(new ModdedSheepLootHandler());
+        MinecraftForge.EVENT_BUS.register(BloodMagicTierHandler.INSTANCE);
         WitcheryExtras.NETWORK
                 .registerMessage(EntitySizeSyncPacket.Handler.class, EntitySizeSyncPacket.class, 0, Side.CLIENT);
         WitcheryExtras.NETWORK.registerMessage(PacketToggleForm.Handler.class, PacketToggleForm.class, 1, Side.SERVER);
