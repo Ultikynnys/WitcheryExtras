@@ -3,7 +3,9 @@ package alkalus.main.proxy;
 import net.minecraftforge.common.MinecraftForge;
 
 import alkalus.main.core.WitcheryExtras;
+import alkalus.main.handlers.BloodMagicTierHandler;
 import alkalus.main.handlers.ServerSizeHandler;
+import alkalus.main.handlers.WeremanRiteRegistrar;
 import alkalus.main.mixins.hooks.EntitySizeManager;
 import alkalus.main.network.EntitySizeSyncPacket;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -23,5 +25,7 @@ public class CommonProxy {
                 .registerMessage(EntitySizeSyncPacket.Handler.class, EntitySizeSyncPacket.class, 0, Side.CLIENT);
     }
 
-    public void postInit(FMLPostInitializationEvent event) {}
+    public void postInit(FMLPostInitializationEvent event) {
+        WeremanRiteRegistrar.INSTANCE.register(event);
+    }
 }
