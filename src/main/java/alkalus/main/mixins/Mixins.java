@@ -39,7 +39,8 @@ public enum Mixins implements IMixins {
                     "witchery.ItemGeneral$3$1Mixin",
                     "witchery.BlockAltarMixin",
                     "witchery.ItemLeonardsUrnMixin",
-                    "witchery.EntityVillagerWereMixin")
+                    "witchery.EntityVillagerWereMixin",
+                    "witchery.CreatureUtilMixin")
             .addClientMixins("witchery.ItemBrewMixin")
             .setPhase(Phase.LATE)),
     WITCHERY_NEI_CONFIG(new MixinBuilder()

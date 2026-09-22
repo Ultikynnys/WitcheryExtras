@@ -4,6 +4,7 @@ import net.minecraftforge.common.MinecraftForge;
 
 import alkalus.main.core.WitcheryExtras;
 import alkalus.main.handlers.ServerSizeHandler;
+import alkalus.main.handlers.VampireTweaksHandler;
 import alkalus.main.mixins.hooks.EntitySizeManager;
 import alkalus.main.network.EntitySizeSyncPacket;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -19,6 +20,7 @@ public class CommonProxy {
     public void init(FMLInitializationEvent event) {
         FMLCommonHandler.instance().bus().register(new ServerSizeHandler());
         MinecraftForge.EVENT_BUS.register(new EntitySizeManager());
+        MinecraftForge.EVENT_BUS.register(VampireTweaksHandler.INSTANCE);
         WitcheryExtras.NETWORK
                 .registerMessage(EntitySizeSyncPacket.Handler.class, EntitySizeSyncPacket.class, 0, Side.CLIENT);
     }
