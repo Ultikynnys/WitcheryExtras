@@ -106,7 +106,7 @@ public class VampireTweaksHandler {
                         (int) player.posX,
                         (int) (player.posY + player.height + 1),
                         (int) player.posZ)) {
-            ParticleEffect.INSTANT_SPELL.send(SoundEffect.NONE, player, 0.4D, 1.0D, 32);
+            ParticleEffect.SPELL_COLORED.send(SoundEffect.NONE, player, 0.4D, 1.0D, 32, 0xFFD700);
         }
     }
 
