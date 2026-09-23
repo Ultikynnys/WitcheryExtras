@@ -6,6 +6,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 
+import com.emoniph.witchery.Witchery;
 import com.emoniph.witchery.common.ExtendedPlayer;
 import com.emoniph.witchery.util.ChatUtil;
 import com.emoniph.witchery.util.TransformCreature;
@@ -62,6 +63,11 @@ public class WerewolfRestrictionHandler {
         return !(ex.getCreatureType() == TransformCreature.WOLFMAN && WitcheryUpgrades.hasFormMastery(player));
     }
 
+    /** Stock exempts the moon charm (the werewolf's own transformation tool) from the beast-form sweep. */
+    private static boolean isMoonCharm(ItemStack stack) {
+        return stack != null && stack.getItem() == Witchery.Items.MOON_CHARM;
+    }
+
     /** Stripped held items never pick up: the pickup would land in the always-empty active slot. */
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onItemPickup(EntityItemPickupEvent event) {
@@ -70,7 +76,8 @@ public class WerewolfRestrictionHandler {
             return;
         }
         ItemStack pickedUp = event.item.getEntityItem();
-        if (pickedUp == null || player.inventory.getStackInSlot(player.inventory.currentItem) != null) {
+        if (pickedUp == null || isMoonCharm(pickedUp)
+                || player.inventory.getStackInSlot(player.inventory.currentItem) != null) {
             return;
         }
         event.setCanceled(true);
@@ -94,7 +101,7 @@ public class WerewolfRestrictionHandler {
         }
         if (blocksHeldItem(player)) {
             ItemStack held = player.getHeldItem();
-            if (held != null) {
+            if (held != null && !isMoonCharm(held)) {
                 dropRestricted(player, held, 0);
             }
         }
