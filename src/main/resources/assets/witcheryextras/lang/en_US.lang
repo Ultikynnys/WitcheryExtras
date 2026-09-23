@@ -7,6 +7,9 @@ WitcheryExtras.nei.power=Power required: %s
 
 witchery.pott.attraho=Attraho
 
+key.categories.witcheryextras=Witchery Extras
+key.witcheryextras.transform=Toggle Beast Form
+
 gui.witcheryextras.distilleryidle.title=Distillery
 gui.witcheryextras.spinningwheel.title=Spinning Wheel
 gui.witcheryextras.witchesoven.title=Witches Oven

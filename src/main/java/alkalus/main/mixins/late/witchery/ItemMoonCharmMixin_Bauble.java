@@ -5,7 +5,6 @@ import java.util.List;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -14,8 +13,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.emoniph.witchery.item.ItemMoonCharm;
-import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 
 import baubles.api.BaubleType;
 import baubles.api.expanded.BaubleExpandedSlots;
@@ -35,12 +32,6 @@ public abstract class ItemMoonCharmMixin_Bauble implements IBaubleExpanded {
     public void witcheryExtras$addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip,
             boolean expanded, CallbackInfo ci) {
         BaubleItemHelper.addSlotInformation(tooltip, witcheryExtras$moonCharmBaubleTypes);
-    }
-
-    @WrapMethod(method = "onItemRightClick")
-    public ItemStack witcheryExtras$onItemRightClick(ItemStack stack, World world, EntityPlayer player,
-            Operation<ItemStack> original) {
-        return BaubleItemHelper.onBaubleRightClick(stack, world, player);
     }
 
     // Baubles interface methods

@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.emoniph.witchery.common.ExtendedPlayer;
 
@@ -105,6 +106,13 @@ public abstract class ExtendedPlayerUpgradesMixin implements WitcheryUpgradeHelp
         boolean legacyWereman = we.getBoolean("Wereman");
         this.weGreaterFormControl = we.getBoolean("GreaterFormControl") || legacyWereman;
         this.weFormMastery = we.getBoolean("FormMastery") || legacyWereman;
+    }
+
+    @Inject(method = "getMaxAvailablePowerOrdinal", at = @At("HEAD"), cancellable = true, remap = false)
+    private void witcheryextras$clampMaxPowerOrdinal(CallbackInfoReturnable<Integer> cir) {
+        if (((ExtendedPlayer) (Object) this).getVampireLevel() > 10) {
+            cir.setReturnValue(ExtendedPlayer.VampirePower.ULTIMATE.ordinal());
+        }
     }
 
     @ModifyConstant(method = "setVampireLevel", constant = @Constant(intValue = 10), require = 1, remap = false)
