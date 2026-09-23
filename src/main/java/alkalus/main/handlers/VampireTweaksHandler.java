@@ -67,6 +67,21 @@ public class VampireTweaksHandler {
         return ex.getVampireLevel() >= 11 || ((WitcheryUpgradeHelper) ex).witcheryExtras$isTwilight();
     }
 
+    /**
+     * Whether the Twilight sunlight sparkle should fire this tick - a purely cosmetic cue, so it ignores the creative
+     * guard that gates the rest of the handler.
+     */
+    private boolean sparklesInSun(EntityPlayer player, ExtendedPlayer ex) {
+        boolean twilight = ex.getVampireLevel() >= 11 || ((WitcheryUpgradeHelper) ex).witcheryExtras$isTwilight();
+        return twilight && ex.getWerewolfLevel() == 0
+                && player.ticksExisted % 40 == 0
+                && player.worldObj.isDaytime()
+                && player.worldObj.canBlockSeeTheSky(
+                        (int) player.posX,
+                        (int) (player.posY + player.height + 1),
+                        (int) player.posZ);
+    }
+
     @SubscribeEvent
     public void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (event.phase != TickEvent.Phase.END || event.player.worldObj.isRemote) {
@@ -74,7 +89,15 @@ public class VampireTweaksHandler {
         }
         EntityPlayer player = event.player;
         ExtendedPlayer ex = ExtendedPlayer.get(player);
-        if (ex == null || !ex.isVampire() || player.capabilities.isCreativeMode) {
+        if (ex == null || !ex.isVampire()) {
+            return;
+        }
+
+        if (sparklesInSun(player, ex)) {
+            ParticleEffect.SPELL_COLORED.send(SoundEffect.NONE, player, 0.4D, 1.0D, 32, 0xFFD700);
+        }
+
+        if (player.capabilities.isCreativeMode) {
             return;
         }
 
@@ -97,16 +120,6 @@ public class VampireTweaksHandler {
                 int amount = 1 + Math.max(0, ex.getVampireLevel() - 1) * REGEN_BONUS_PER_LEVEL / 2;
                 ex.increaseBloodPower(Math.min(amount, max - ex.getBloodPower()));
             }
-        }
-
-        // Twilight vampires sparkle in direct sunlight instead of suffering.
-        if (player.ticksExisted % 40 == 0 && isTwilightVampire(player)
-                && player.worldObj.isDaytime()
-                && player.worldObj.canBlockSeeTheSky(
-                        (int) player.posX,
-                        (int) (player.posY + player.height + 1),
-                        (int) player.posZ)) {
-            ParticleEffect.SPELL_COLORED.send(SoundEffect.NONE, player, 0.4D, 1.0D, 32, 0xFFD700);
         }
     }
 
