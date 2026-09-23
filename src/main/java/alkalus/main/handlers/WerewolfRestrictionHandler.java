@@ -10,7 +10,7 @@ import com.emoniph.witchery.common.ExtendedPlayer;
 import com.emoniph.witchery.util.ChatUtil;
 import com.emoniph.witchery.util.TransformCreature;
 
-import alkalus.main.core.WitcheryUpgradeHelper;
+import alkalus.main.core.WitcheryUpgrades;
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
@@ -20,12 +20,11 @@ import cpw.mods.fml.common.gameevent.TickEvent;
  * ticks (GenericEvents.updateWerewolfEffects via onLivingUpdate), so a freshly equipped piece sits on the player for up
  * to two seconds and drops come back with no pickup delay.
  * <ul>
- * <li>Armor: dropped the tick after it is equipped, with a pickup delay.</li>
- * <li>Held item: dropped the tick after it lands in the active hotbar slot. For a wolf that slot is always empty, so a
- * pickup would always land there - the pickup is canceled outright instead. The item never enters the inventory, so
- * there is no drop/pickup loop and no lag machine.</li>
- * <li>Wereman upgrade holders are exempt from both: the point of the upgrade is holding items and wearing armor in
- * beast form.</li>
+ * <li>Wolf form: the held item is kept (the beast carries it in its muzzle) but armor is still stripped, matching
+ * stock.</li>
+ * <li>Werewolf form: the held item is stripped until the Greater Form Control upgrade, and armor until the Form Mastery
+ * upgrade; both are then left alone.</li>
+ * <li>Restricted pieces are dropped the tick they appear, with a pickup delay.</li>
  * </ul>
  */
 public class WerewolfRestrictionHandler {
@@ -35,22 +34,39 @@ public class WerewolfRestrictionHandler {
 
     private final java.util.Map<String, Integer> nextMessageTick = new java.util.HashMap<>();
 
-    public boolean isRestricted(EntityPlayer player) {
+    private ExtendedPlayer beast(EntityPlayer player) {
+        if (player.capabilities.isCreativeMode) {
+            return null;
+        }
         ExtendedPlayer ex = ExtendedPlayer.get(player);
-        if (ex == null || player.capabilities.isCreativeMode) {
-            return false;
+        if (ex == null) {
+            return null;
         }
-        if (ex.getCreatureType() != TransformCreature.WOLF) {
-            return false;
-        }
-        return !(ex.getWerewolfLevel() >= 11 && ((WitcheryUpgradeHelper) ex).witcheryExtras$isWereman());
+        TransformCreature type = ex.getCreatureType();
+        return type == TransformCreature.WOLF || type == TransformCreature.WOLFMAN ? ex : null;
     }
 
-    /** Wolves never pick up items: anything picked up would land in the always-empty active slot. */
+    private boolean blocksHeldItem(EntityPlayer player) {
+        ExtendedPlayer ex = beast(player);
+        if (ex == null || ex.getCreatureType() == TransformCreature.WOLF) {
+            return false;
+        }
+        return !WitcheryUpgrades.hasGreaterFormControl(player);
+    }
+
+    private boolean blocksArmor(EntityPlayer player) {
+        ExtendedPlayer ex = beast(player);
+        if (ex == null) {
+            return false;
+        }
+        return !(ex.getCreatureType() == TransformCreature.WOLFMAN && WitcheryUpgrades.hasFormMastery(player));
+    }
+
+    /** Stripped held items never pick up: the pickup would land in the always-empty active slot. */
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onItemPickup(EntityItemPickupEvent event) {
         EntityPlayer player = event.entityPlayer;
-        if (player.worldObj.isRemote || event.isCanceled() || !isRestricted(player)) {
+        if (player.worldObj.isRemote || event.isCanceled() || !blocksHeldItem(player)) {
             return;
         }
         ItemStack pickedUp = event.item.getEntityItem();
@@ -68,18 +84,19 @@ public class WerewolfRestrictionHandler {
             return;
         }
         EntityPlayer player = event.player;
-        if (!isRestricted(player)) {
-            return;
-        }
-        for (int slot = 1; slot <= 4; slot++) {
-            ItemStack armor = player.getEquipmentInSlot(slot);
-            if (armor != null) {
-                dropRestricted(player, armor, slot);
+        if (blocksArmor(player)) {
+            for (int slot = 1; slot <= 4; slot++) {
+                ItemStack armor = player.getEquipmentInSlot(slot);
+                if (armor != null) {
+                    dropRestricted(player, armor, slot);
+                }
             }
         }
-        ItemStack held = player.getHeldItem();
-        if (held != null) {
-            dropRestricted(player, held, 0);
+        if (blocksHeldItem(player)) {
+            ItemStack held = player.getHeldItem();
+            if (held != null) {
+                dropRestricted(player, held, 0);
+            }
         }
     }
 

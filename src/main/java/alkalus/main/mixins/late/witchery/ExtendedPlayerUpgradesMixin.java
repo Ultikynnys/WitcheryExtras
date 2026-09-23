@@ -16,11 +16,12 @@ import com.emoniph.witchery.common.ExtendedPlayer;
 import alkalus.main.core.WitcheryUpgradeHelper;
 
 /**
- * Post-10 progression is upgrade-flag based: each earned upgrade (Twilight, Blood Magic, Wereman) adds +1 to the
- * effective level, in any order. The stock level field still holds the 0-10 quest ladder; flags carry everything beyond
- * it.
+ * Post-10 progression is upgrade-flag based: each earned upgrade (Twilight, Blood Magic, Greater Form Control, Form
+ * Mastery) adds +1 to the effective level, in any order. The stock level field still holds the 0-10 quest ladder; flags
+ * carry everything beyond it.
  * <ul>
- * <li>{@code setVampireLevel} cap 10 -&gt; 12, {@code setWerewolfLevel} cap 10 -&gt; 11 (the Wereman upgrade).</li>
+ * <li>{@code setVampireLevel} cap 10 -&gt; 12, {@code setWerewolfLevel} cap 10 -&gt; 12 (Greater Form Control at 11,
+ * Form Mastery at 12).</li>
  * <li>NBT load clamps raised to match, and the upgrade flags persisted alongside.</li>
  * </ul>
  */
@@ -38,7 +39,10 @@ public abstract class ExtendedPlayerUpgradesMixin implements WitcheryUpgradeHelp
     private boolean weBloodMagic;
 
     @Unique
-    private boolean weWereman;
+    private boolean weGreaterFormControl;
+
+    @Unique
+    private boolean weFormMastery;
 
     @Override
     public boolean witcheryExtras$isTwilight() {
@@ -51,8 +55,13 @@ public abstract class ExtendedPlayerUpgradesMixin implements WitcheryUpgradeHelp
     }
 
     @Override
-    public boolean witcheryExtras$isWereman() {
-        return this.weWereman;
+    public boolean witcheryExtras$hasGreaterFormControl() {
+        return this.weGreaterFormControl;
+    }
+
+    @Override
+    public boolean witcheryExtras$hasFormMastery() {
+        return this.weFormMastery;
     }
 
     @Override
@@ -66,8 +75,13 @@ public abstract class ExtendedPlayerUpgradesMixin implements WitcheryUpgradeHelp
     }
 
     @Override
-    public void witcheryExtras$setWereman(boolean value) {
-        this.weWereman = value;
+    public void witcheryExtras$setGreaterFormControl(boolean value) {
+        this.weGreaterFormControl = value;
+    }
+
+    @Override
+    public void witcheryExtras$setFormMastery(boolean value) {
+        this.weFormMastery = value;
     }
 
     @Shadow(remap = false)
@@ -78,7 +92,8 @@ public abstract class ExtendedPlayerUpgradesMixin implements WitcheryUpgradeHelp
         NBTTagCompound we = new NBTTagCompound();
         we.setBoolean("Twilight", this.weTwilight);
         we.setBoolean("BloodMagic", this.weBloodMagic);
-        we.setBoolean("Wereman", this.weWereman);
+        we.setBoolean("GreaterFormControl", this.weGreaterFormControl);
+        we.setBoolean("FormMastery", this.weFormMastery);
         compound.setTag(WE_FLAGS_KEY, we);
     }
 
@@ -87,7 +102,9 @@ public abstract class ExtendedPlayerUpgradesMixin implements WitcheryUpgradeHelp
         NBTTagCompound we = compound.getCompoundTag(WE_FLAGS_KEY);
         this.weTwilight = we.getBoolean("Twilight");
         this.weBloodMagic = we.getBoolean("BloodMagic");
-        this.weWereman = we.getBoolean("Wereman");
+        boolean legacyWereman = we.getBoolean("Wereman");
+        this.weGreaterFormControl = we.getBoolean("GreaterFormControl") || legacyWereman;
+        this.weFormMastery = we.getBoolean("FormMastery") || legacyWereman;
     }
 
     @ModifyConstant(method = "setVampireLevel", constant = @Constant(intValue = 10), require = 1, remap = false)
@@ -97,7 +114,7 @@ public abstract class ExtendedPlayerUpgradesMixin implements WitcheryUpgradeHelp
 
     @ModifyConstant(method = "setWerewolfLevel", constant = @Constant(intValue = 10), require = 1, remap = false)
     private int witcheryextras$werewolfCap(int original) {
-        return 11;
+        return 12;
     }
 
     @ModifyConstant(

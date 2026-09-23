@@ -12,11 +12,15 @@ public interface WitcheryUpgradeHelper {
 
     boolean witcheryExtras$isBloodMagic();
 
-    boolean witcheryExtras$isWereman();
+    boolean witcheryExtras$hasGreaterFormControl();
+
+    boolean witcheryExtras$hasFormMastery();
 
     void witcheryExtras$setTwilight(boolean value);
 
     void witcheryExtras$setBloodMagic(boolean value);
 
-    void witcheryExtras$setWereman(boolean value);
+    void witcheryExtras$setGreaterFormControl(boolean value);
+
+    void witcheryExtras$setFormMastery(boolean value);
 }

@@ -6,8 +6,8 @@ import com.emoniph.witchery.common.ExtendedPlayer;
 import com.emoniph.witchery.util.Config;
 
 /**
- * Central gate for every WitcheryExtras upgrade (Twilight, Blood Magic, Wereman). An upgrade only applies when the
- * player:
+ * Central gate for every WitcheryExtras upgrade (Twilight, Blood Magic, Greater Form Control, Form Mastery). An upgrade
+ * only applies when the player:
  * <ul>
  * <li>has reached level {@value #MIN_UPGRADE_LEVEL} of the owning class (the original quest flow below 10 stays
  * untouched), and</li>
@@ -35,11 +35,29 @@ public final class WitcheryUpgrades {
                 && ex.getWerewolfLevel() == 0;
     }
 
-    /** Werewolf upgrades (Wereman). */
+    /** Werewolf upgrades (Greater Form Control, Form Mastery). */
     public static boolean canUseWerewolfUpgrade(EntityPlayer player) {
         ExtendedPlayer ex = ExtendedPlayer.get(player);
         return ex != null && !player.capabilities.isCreativeMode
                 && ex.getWerewolfLevel() >= MIN_UPGRADE_LEVEL
                 && !ex.isVampire();
+    }
+
+    /** Greater Form Control (level 11): the werewolf form can hold items. */
+    public static boolean hasGreaterFormControl(EntityPlayer player) {
+        ExtendedPlayer ex = ExtendedPlayer.get(player);
+        return ex != null && !player.capabilities.isCreativeMode
+                && !ex.isVampire()
+                && ex.getWerewolfLevel() >= 11
+                && ((WitcheryUpgradeHelper) ex).witcheryExtras$hasGreaterFormControl();
+    }
+
+    /** Form Mastery (level 12): the werewolf form can wear armor and sleep; the wolf form is unaffected. */
+    public static boolean hasFormMastery(EntityPlayer player) {
+        ExtendedPlayer ex = ExtendedPlayer.get(player);
+        return ex != null && !player.capabilities.isCreativeMode
+                && !ex.isVampire()
+                && ex.getWerewolfLevel() >= 12
+                && ((WitcheryUpgradeHelper) ex).witcheryExtras$hasFormMastery();
     }
 }

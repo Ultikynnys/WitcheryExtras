@@ -43,8 +43,13 @@ public enum Mixins implements IMixins {
                     "witchery.ExtendedPlayerUpgradesMixin",
                     "witchery.ShapeshiftMixin",
                     "witchery.ItemWolfTokenMixin",
+                    "witchery.WerewolfEffectsMixin",
+                    "witchery.GenericEventsSleepMixin",
                     "witchery.GenericEventsMoonCharmMixin")
-            .addClientMixins("witchery.ItemBrewMixin", "witchery.TransformWolfmanMixin")
+            .addClientMixins(
+                    "witchery.ItemBrewMixin",
+                    "witchery.TransformWolfmanMixin",
+                    "witchery.TransformWolfMixin")
             .setPhase(Phase.LATE)),
     WITCHERY_NEI_CONFIG(new MixinBuilder()
             .addCommonMixins("witchery.NEIWitcheryConfigMixin")

@@ -20,8 +20,8 @@ import alkalus.main.core.WitcheryUpgrades;
 /**
  * Creative Bat/Wolf Token level cycling extended past 10: crossing the stock quest ladder grants the WitcheryExtras
  * upgrade flags in a fixed order, so creative tokens still hand out every upgrade. Vampire: Twilight -&gt; Blood Magic.
- * Werewolf: Wereman. The central {@link WitcheryUpgrades} gate enforces a minimum class level of 10 and excludes
- * hybrids, so tokens can never bypass those rules.
+ * Werewolf: Greater Form Control -&gt; Form Mastery. The central {@link WitcheryUpgrades} gate enforces a minimum class
+ * level of 10 and excludes hybrids, so tokens can never bypass those rules.
  */
 @SuppressWarnings("UnusedMixin")
 @Mixin(ItemWolfToken.class)
@@ -31,7 +31,7 @@ public abstract class ItemWolfTokenMixin {
     private static final int WE_VAMPIRE_CAP = 12;
 
     @Unique
-    private static final int WE_WEREWOLF_CAP = 11;
+    private static final int WE_WEREWOLF_CAP = 12;
 
     @Inject(method = "onUsingTick", at = @At("HEAD"), cancellable = true, remap = false)
     private void witcheryextras$extendedCycle(ItemStack stack, EntityPlayer player, int countdown, CallbackInfo ci) {
@@ -78,15 +78,25 @@ public abstract class ItemWolfTokenMixin {
             level = ex.getWerewolfLevel() + 1;
             if (level > WE_WEREWOLF_CAP) {
                 level = 0;
-                we.witcheryExtras$setWereman(false);
+                we.witcheryExtras$setGreaterFormControl(false);
+                we.witcheryExtras$setFormMastery(false);
             }
             if (level > WitcheryUpgrades.MIN_UPGRADE_LEVEL && WitcheryUpgrades.canUseWerewolfUpgrade(player)) {
-                we.witcheryExtras$setWereman(true);
-                ChatUtil.sendTranslated(
-                        EnumChatFormatting.LIGHT_PURPLE,
-                        player,
-                        "witcheryextras.upgrade.wereman",
-                        new Object[0]);
+                if (level == 11) {
+                    we.witcheryExtras$setGreaterFormControl(true);
+                    ChatUtil.sendTranslated(
+                            EnumChatFormatting.LIGHT_PURPLE,
+                            player,
+                            "witcheryextras.upgrade.greaterformcontrol",
+                            new Object[0]);
+                } else if (level == 12) {
+                    we.witcheryExtras$setFormMastery(true);
+                    ChatUtil.sendTranslated(
+                            EnumChatFormatting.LIGHT_PURPLE,
+                            player,
+                            "witcheryextras.upgrade.formmastery",
+                            new Object[0]);
+                }
             }
             ex.setWerewolfLevel(level);
             ChatUtil.sendTranslated(

@@ -12,10 +12,12 @@ import com.emoniph.witchery.client.TransformWolfman;
 import com.emoniph.witchery.common.ExtendedPlayer;
 import com.emoniph.witchery.entity.EntityWolfman;
 
+import alkalus.main.core.WitcheryUpgrades;
+
 /**
  * Copies the player's armor slots onto the wolfman render proxy. Stock code only copies the held item, so
  * RenderWolfman's per-section armor passes (head/chest/arms/legs) never fire and armor is invisible on transformed
- * players. A level-11 werewolf (Wereman upgrade) gets the four-part swap: helmet renders on the head, chestplate on
+ * players. A werewolf with the Form Mastery upgrade gets the four-part swap: helmet renders on the head, chestplate on
  * body+arms, leggings/boots on the wolf legs. Other players keep stock behavior.
  */
 @SuppressWarnings("UnusedMixin")
@@ -32,7 +34,7 @@ public abstract class TransformWolfmanMixin {
             return;
         }
         ExtendedPlayer ex = ExtendedPlayer.get((EntityPlayer) entity);
-        if (ex == null || ex.getWerewolfLevel() < 11) {
+        if (ex == null || !WitcheryUpgrades.hasFormMastery((EntityPlayer) entity)) {
             return;
         }
         for (int slot = 1; slot <= 4; slot++) {
