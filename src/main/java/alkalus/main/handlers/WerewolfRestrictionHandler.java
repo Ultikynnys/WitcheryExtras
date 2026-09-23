@@ -3,6 +3,8 @@ package alkalus.main.handlers;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 
@@ -32,6 +34,8 @@ public class WerewolfRestrictionHandler {
 
     private static final int MESSAGE_THROTTLE_TICKS = 40;
     private static final int PICKUP_DELAY_TICKS = 40;
+    private static final int SILVER_DURATION_TICKS = 40;
+    private static final int SILVER_AMPLIFIER = 2;
 
     private final java.util.Map<String, Integer> nextMessageTick = new java.util.HashMap<>();
 
@@ -66,6 +70,38 @@ public class WerewolfRestrictionHandler {
     /** Stock exempts the moon charm (the werewolf's own transformation tool) from the beast-form sweep. */
     private static boolean isMoonCharm(ItemStack stack) {
         return stack != null && stack.getItem() == Witchery.Items.MOON_CHARM;
+    }
+
+    /**
+     * Silver sears a werewolf in beast form: Weakness III and Slowness III while any worn or held item is silver. One
+     * scan covers every slot.
+     */
+    private void applySilverWard(EntityPlayer player) {
+        ExtendedPlayer ex = ExtendedPlayer.get(player);
+        if (ex == null) {
+            return;
+        }
+        TransformCreature type = ex.getCreatureType();
+        if (type != TransformCreature.WOLF && type != TransformCreature.WOLFMAN) {
+            return;
+        }
+        for (int slot = 0; slot <= 4; slot++) {
+            if (isSilver(player.getEquipmentInSlot(slot))) {
+                player.addPotionEffect(
+                        new PotionEffect(Potion.weakness.id, SILVER_DURATION_TICKS, SILVER_AMPLIFIER, true));
+                player.addPotionEffect(
+                        new PotionEffect(Potion.moveSlowdown.id, SILVER_DURATION_TICKS, SILVER_AMPLIFIER, true));
+                return;
+            }
+        }
+    }
+
+    private static boolean isSilver(ItemStack stack) {
+        if (stack == null) {
+            return false;
+        }
+        String name = stack.getDisplayName();
+        return name != null && name.toLowerCase(java.util.Locale.ROOT).contains("silver");
     }
 
     /** Stripped held items never pick up: the pickup would land in the always-empty active slot. */
@@ -105,6 +141,7 @@ public class WerewolfRestrictionHandler {
                 dropRestricted(player, held, 0);
             }
         }
+        applySilverWard(player);
     }
 
     private void dropRestricted(EntityPlayer player, ItemStack stack, int slot) {

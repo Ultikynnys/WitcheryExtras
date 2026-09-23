@@ -32,7 +32,8 @@ public abstract class TransformWolfmanMixin {
         if (!(entity instanceof EntityPlayer) || this.proxyEntity == null) {
             return;
         }
-        if (!WitcheryUpgrades.hasFormMastery((EntityPlayer) entity)) {
+        EntityPlayer player = (EntityPlayer) entity;
+        if (!player.capabilities.isCreativeMode && !WitcheryUpgrades.hasFormMastery(player)) {
             return;
         }
         for (int slot = 1; slot <= 4; slot++) {
