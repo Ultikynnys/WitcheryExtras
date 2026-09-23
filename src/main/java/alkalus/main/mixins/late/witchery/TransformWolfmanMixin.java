@@ -9,7 +9,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.emoniph.witchery.client.TransformWolfman;
-import com.emoniph.witchery.common.ExtendedPlayer;
 import com.emoniph.witchery.entity.EntityWolfman;
 
 import alkalus.main.core.WitcheryUpgrades;
@@ -33,8 +32,7 @@ public abstract class TransformWolfmanMixin {
         if (!(entity instanceof EntityPlayer) || this.proxyEntity == null) {
             return;
         }
-        ExtendedPlayer ex = ExtendedPlayer.get((EntityPlayer) entity);
-        if (ex == null || !WitcheryUpgrades.hasFormMastery((EntityPlayer) entity)) {
+        if (!WitcheryUpgrades.hasFormMastery((EntityPlayer) entity)) {
             return;
         }
         for (int slot = 1; slot <= 4; slot++) {

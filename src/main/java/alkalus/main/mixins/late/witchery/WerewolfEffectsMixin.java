@@ -11,7 +11,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.emoniph.witchery.Witchery;
-import com.emoniph.witchery.common.ExtendedPlayer;
 import com.emoniph.witchery.common.GenericEvents;
 
 import alkalus.main.core.WitcheryUpgrades;
@@ -28,10 +27,6 @@ public abstract class WerewolfEffectsMixin {
     @Inject(method = "updateWerewolfEffects", at = @At("HEAD"), cancellable = true, remap = false)
     private static void witcheryextras$keepUpgradedSlots(EntityPlayer player, boolean isWolfman, CallbackInfo ci) {
         if (!isWolfman) {
-            return;
-        }
-        ExtendedPlayer ex = ExtendedPlayer.get(player);
-        if (ex == null) {
             return;
         }
         boolean holdItems = WitcheryUpgrades.hasGreaterFormControl(player);

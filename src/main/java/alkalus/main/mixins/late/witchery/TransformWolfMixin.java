@@ -48,9 +48,25 @@ public abstract class TransformWolfMixin {
         if (held == null || held.getItem() == null) {
             return;
         }
-        float bodyYaw = frontface ? 0.0F
-                : this.proxyEntity.prevRenderYawOffset
-                        + (this.proxyEntity.renderYawOffset - this.proxyEntity.prevRenderYawOffset) * partialTicks;
+        float bodyYaw;
+        float headYaw;
+        float headPitch;
+        if (frontface) {
+            bodyYaw = 0.0F;
+            headYaw = 0.0F;
+            headPitch = 0.0F;
+        } else {
+            bodyYaw = witcheryextras$interp(
+                    this.proxyEntity.prevRenderYawOffset,
+                    this.proxyEntity.renderYawOffset,
+                    partialTicks);
+            headYaw = witcheryextras$interp(
+                    this.proxyEntity.prevRotationYawHead,
+                    this.proxyEntity.rotationYawHead,
+                    partialTicks) - bodyYaw;
+            headPitch = this.proxyEntity.prevRotationPitch
+                    + (this.proxyEntity.rotationPitch - this.proxyEntity.prevRotationPitch) * partialTicks;
+        }
         double d3 = -((double) this.proxyEntity.yOffset);
         if (this.proxyEntity.isSneaking() && !(entity instanceof EntityPlayerSP)) {
             d3 -= 0.125D;
@@ -61,9 +77,23 @@ public abstract class TransformWolfMixin {
         GL11.glRotatef(180.0F - bodyYaw, 0.0F, 1.0F, 0.0F);
         GL11.glScalef(-1.0F, -1.0F, 1.0F);
         GL11.glTranslatef(0.0F, -1.5078125F, 0.0F);
-        GL11.glTranslatef(-0.0625F, 0.9375F, -0.625F);
+        GL11.glTranslatef(-0.0625F, 0.84375F, -0.4375F);
+        GL11.glRotatef(headYaw, 0.0F, 1.0F, 0.0F);
+        GL11.glRotatef(headPitch, 1.0F, 0.0F, 0.0F);
+        GL11.glTranslatef(0.0F, 0.09375F, -0.21875F);
         this.witcheryextras$drawHeldItem(entity, held);
         GL11.glPopMatrix();
+    }
+
+    private static float witcheryextras$interp(float prev, float current, float partialTicks) {
+        float delta = current - prev;
+        while (delta < -180.0F) {
+            delta += 360.0F;
+        }
+        while (delta >= 180.0F) {
+            delta -= 360.0F;
+        }
+        return prev + partialTicks * delta;
     }
 
     private void witcheryextras$drawHeldItem(EntityLivingBase entity, ItemStack itemstack) {
