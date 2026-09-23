@@ -26,10 +26,9 @@ public abstract class GenericEventsMoonCharmMixin {
 
     @ModifyExpressionValue(
             method = "onLivingUpdate",
-            remap = false,
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/entity/player/InventoryPlayer;hasItem (Lnet/minecraft/item/Item;)Z"))
+                    target = "Lnet/minecraft/entity/player/InventoryPlayer;hasItem(Lnet/minecraft/item/Item;)Z"))
     private boolean witcheryextras$moonCharmInBaubles(boolean hasCharmInInventory,
             LivingEvent.LivingUpdateEvent event) {
         if (hasCharmInInventory || !(event.entity instanceof EntityPlayer)) {
