@@ -15,22 +15,23 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 /**
  * Registers the werewolf ascension rites into RiteRegistry. Runs in postInit so Witchery's own rites (IDs 1-96) exist
  * first; ours take IDs 100 and 101 and bookIndexes 50 and 51 (end of the book). The Circle Magic book renders every
- * registered rite automatically: Rite of the Wereman grants Greater Form Control, Rite of Form Mastery grants Form
- * Mastery.
+ * registered rite automatically: the first grants Greater Form Control, the second Form Mastery.
  */
 public class WeremanRiteRegistrar {
 
     public static final WeremanRiteRegistrar INSTANCE = new WeremanRiteRegistrar();
 
     public void register(FMLPostInitializationEvent event) {
-        RiteRegistry.addRecipe(
-                100,
-                50,
-                new WerewolfProgressionRite("wereman", 10, false),
-                sacrifice(),
-                java.util.EnumSet.of(com.emoniph.witchery.ritual.RitualTraits.ONLY_AT_NIGHT),
-                new com.emoniph.witchery.ritual.Circle(0, 0, 40),
-                new com.emoniph.witchery.ritual.Circle(0, 0, 28)).setUnlocalizedName("witchery.rite.wereman");
+        RiteRegistry
+                .addRecipe(
+                        100,
+                        50,
+                        new WerewolfProgressionRite("greaterformcontrol", 10, false),
+                        sacrifice(),
+                        java.util.EnumSet.of(com.emoniph.witchery.ritual.RitualTraits.ONLY_AT_NIGHT),
+                        new com.emoniph.witchery.ritual.Circle(28, 0, 0),
+                        new com.emoniph.witchery.ritual.Circle(40, 0, 0))
+                .setUnlocalizedName("witchery.rite.greaterformcontrol");
         RiteRegistry
                 .addRecipe(
                         101,
@@ -38,8 +39,8 @@ public class WeremanRiteRegistrar {
                         new WerewolfProgressionRite("formmastery", 11, true),
                         sacrifice(),
                         java.util.EnumSet.of(com.emoniph.witchery.ritual.RitualTraits.ONLY_AT_NIGHT),
-                        new com.emoniph.witchery.ritual.Circle(0, 0, 48),
-                        new com.emoniph.witchery.ritual.Circle(0, 0, 32))
+                        new com.emoniph.witchery.ritual.Circle(16, 0, 0),
+                        new com.emoniph.witchery.ritual.Circle(40, 0, 0))
                 .setUnlocalizedName("witchery.rite.formmastery");
     }
 
