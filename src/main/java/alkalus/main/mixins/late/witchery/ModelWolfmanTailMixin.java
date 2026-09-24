@@ -11,9 +11,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.emoniph.witchery.client.model.ModelWolfman;
 
+import alkalus.main.mixins.hooks.TailAnimationHelper;
+
 /**
- * Stock keeps the wolfman tail angled back and down (rotateAngleX 0.59) even while crouched, so it dips through the
- * legs when sneaking. Raise it to point up whenever the model is sneaking.
+ * Wolfman tail follows the hips and animates cleanly: when sneaking, raises up behind the back and tracks the shifted
+ * pelvis; when walking or running, shares the unified velocity-driven pitch with wolf form.
  */
 @SuppressWarnings("UnusedMixin")
 @Mixin(ModelWolfman.class)
@@ -25,11 +27,18 @@ public abstract class ModelWolfmanTailMixin {
     @Shadow(remap = false)
     public boolean isSneak;
 
-    @Inject(method = "setRotationAngles", at = @At("TAIL"), remap = false)
+    @Inject(method = { "setRotationAngles", "func_78087_a" }, at = @At("TAIL"), remap = false)
     private void witcheryextras$raiseTailWhenSneaking(float swing, float amount, float ageInTicks, float netHeadYaw,
             float headPitch, float scale, Entity entity, CallbackInfo ci) {
-        if (this.isSneak) {
-            this.tail.rotateAngleX = -0.4F;
+        boolean isCrouching = this.isSneak || (entity != null && entity.isSneaking());
+        if (isCrouching) {
+            this.tail.rotationPointY = 8.5F;
+            this.tail.rotationPointZ = 6.0F;
+            this.tail.rotateAngleY = 0.0F;
+        } else {
+            this.tail.rotationPointY = 11.9F;
+            this.tail.rotationPointZ = 3.6F;
         }
+        this.tail.rotateAngleX = TailAnimationHelper.computeBeastTailPitch(entity, amount, isCrouching);
     }
 }

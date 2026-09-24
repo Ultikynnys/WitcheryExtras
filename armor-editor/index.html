@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>WitcheryExtras Beast Armor Editor</title>
+<style>
+:root {
+  --bg: #1b1d21;
+  --panel: #24262b;
+  --panel2: #2c2f35;
+  --border: #3a3d44;
+  --text: #d7dae0;
+  --dim: #8b8f98;
+  --accent: #4f9cff;
+  --green: #37d67a;
+  --red: #ff5f56;
+  --warn: #ffb340;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font: 13px/1.45 'Segoe UI', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  height: 100vh;
+  display: grid;
+  grid-template-rows: 42px 1fr 26px;
+  overflow: hidden;
+}
+header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 12px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+}
+header h1 { font-size: 14px; font-weight: 600; }
+header h1 span { color: var(--accent); }
+header .spacer { flex: 1; }
+button, select, input[type=file]::file-selector-button {
+  background: var(--panel2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 4px 10px;
+  font: inherit;
+  cursor: pointer;
+}
+button:hover { border-color: var(--accent); color: var(--accent); }
+button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+button.primary:hover { filter: brightness(1.1); color: #fff; }
+input[type=text], input[type=number] {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text);
+  padding: 3px 6px;
+  font: inherit;
+  width: 64px;
+}
+input[type=color] { width: 34px; height: 26px; padding: 0; border: 1px solid var(--border); background: none; }
+main {
+  display: grid;
+  grid-template-columns: 230px minmax(0, 1fr) 50vw;
+  min-height: 0;
+}
+.panel { background: var(--panel); overflow-y: auto; }
+#left { border-right: 1px solid var(--border); padding: 8px; }
+#right {
+  border-left: 1px solid var(--border);
+  display: grid;
+  grid-template-rows: minmax(0, 3fr) minmax(0, 2fr);
+  min-height: 0;
+}
+#viewport { position: relative; min-width: 0; user-select: none; -webkit-user-select: none; }
+#viewport canvas { display: block; width: 100%; height: 100%; }
+.viewport-toolbar {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 10;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  background: rgba(36,38,43,.85);
+  padding: 6px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+.viewport-toolbar label { display: flex; align-items: center; gap: 4px; color: var(--dim); font-size: 12px; }
+.section { margin-bottom: 10px; }
+.section > h3 {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--dim);
+  margin-bottom: 6px;
+}
+.bone-item, .shell-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+.bone-item:hover, .shell-item:hover { background: var(--panel2); }
+.bone-item.selected, .shell-item.selected { background: #2b3b52; border-color: var(--accent); }
+.shell-item .dot { width: 10px; height: 10px; border-radius: 2px; flex: none; }
+.shell-item .name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.shell-item .bad { color: var(--red); font-size: 11px; }
+.bone-item .tag { color: var(--dim); font-size: 11px; }
+.bone-children { margin-left: 16px; border-left: 1px dashed var(--border); padding-left: 4px; }
+.slot-tabs { display: flex; gap: 4px; margin-bottom: 8px; flex-wrap: wrap; }
+.slot-tabs button { padding: 3px 8px; font-size: 12px; }
+.slot-tabs button.active { border-color: var(--accent); color: var(--accent); }
+#uvCanvasWrap #uvCanvas { margin: auto; }
+#uvPane { display: flex; flex-direction: column; min-height: 0; }
+#uvCanvasWrap { position: relative; flex: 1; min-height: 0; overflow: auto; background: #16171a; display: flex; }
+#uvCanvas { display: block; image-rendering: pixelated; cursor: crosshair; margin: auto; }
+#uvToolbar {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+#shellProps { display: grid; grid-template-columns: auto 1fr; gap: 5px 8px; align-items: center; }
+#shellProps label { color: var(--dim); font-size: 12px; }
+#shellProps .row3 { display: flex; gap: 4px; }
+#shellProps .row3 input { width: 52px; }
+.hint { color: var(--dim); font-size: 11px; margin-top: 6px; }
+#statusBar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 12px;
+  background: var(--panel);
+  border-top: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--dim);
+}
+#statusBar .ok { color: var(--green); }
+#statusBar .bad { color: var(--red); }
+#log { position: absolute; bottom: 8px; left: 8px; max-width: 60%; font-size: 11px; color: var(--warn); pointer-events: none; }
+#boneSelect, #parentSelect { width: 100%; }
+.import-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.kbd {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-bottom-width: 2px;
+  border-radius: 3px;
+  padding: 0 4px;
+  font-size: 11px;
+  font-family: Consolas, monospace;
+}
+dialog {
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  max-width: 560px;
+  width: 90%;
+}
+dialog::backdrop { background: rgba(0,0,0,.6); }
+.gizmo-cap, .gizmo-ring, .gizmo-core { user-select: none; -webkit-user-select: none; }
+body.gizmo-dragging { user-select: none; -webkit-user-select: none; cursor: grabbing; }
+body.gizmo-dragging * { cursor: grabbing !important; }
+dialog h2 { font-size: 15px; margin-bottom: 10px; }
+dialog textarea {
+  width: 100%;
+  height: 300px;
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-family: Consolas, monospace;
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+.check { display: flex; align-items: center; gap: 6px; color: var(--dim); }
+</style>
+</head>
+<body>
+<header>
+  <h1>WitcheryExtras <span>Beast Armor Editor</span></h1>
+  <div class="spacer"></div>
+  <label class="check"><input type="checkbox" id="showFur" checked> Fur</label>
+  <label class="check"><input type="checkbox" id="showLayer1" checked> Layer 1</label>
+  <label class="check"><input type="checkbox" id="showLayer2" checked> Layer 2</label>
+  <select id="armorPreset"><option value="">Preset armor…</option></select>
+  <input type="file" id="texFile" accept="image/png" multiple title="Load armor layer textures">
+  <button id="btnExportJava" class="primary">Export Java</button>
+  <button id="btnSave">Save</button>
+  <button id="btnLoad">Load</button>
+  <button id="btnExportJson">Export JSON</button>
+  <button id="btnImportJson">Import JSON</button>
+</header>
+<main>
+  <aside id="left" class="panel">
+    <div class="section">
+      <h3>Bones (beast model)</h3>
+      <div id="boneTree"></div>
+    </div>
+    <div class="section">
+      <h3>Armor shells <button id="btnAddShell" style="float:right">+ Add</button></h3>
+      <div id="shellList"></div>
+      <div class="hint">Click a shell to select. Del removes. Drag orbits · Shift/Middle drag pans · scroll zooms · Reset view.</div>
+    </div>
+  </aside>
+  <section id="viewport">
+    <div class="viewport-toolbar">
+      <label>Gizmo <select id="gizmoSel">
+        <option value="translate" selected>Move</option>
+        <option value="rotate">Rotate</option>
+        <option value="scale">Scale</option>
+      </select></label>
+      <label>Anim <select id="animSel">
+        <option value="idle">Idle</option>
+        <option value="walk">Walk</option>
+        <option value="sneak">Sneak</option>
+      </select></label>
+      <button id="btnResetCam" title="Reset camera (orbit, zoom, pan)">Reset view</button>
+    </div>
+    <div id="log"></div>
+  </section>
+  <aside id="right" class="panel">
+    <div id="uvPane">
+      <div id="uvToolbar">
+        <div class="slot-tabs" id="slotTabs"></div>
+        <button id="btnLoadPng">Load PNG…</button>
+        <label class="check"><input type="checkbox" id="uvShowShells" checked> Shell UVs</label>
+        <label class="check"><input type="checkbox" id="uvGrid" checked> Grid</label>
+        <label class="check">BG <input type="color" id="uvBg" value="#111318"></label>
+        <button id="btnResetIslands" title="Move every face back to its default UV position">Reset islands</button>
+      </div>
+      <div id="uvCanvasWrap"><canvas id="uvCanvas"></canvas></div>
+      <div class="hint" style="padding:0 8px 6px">Drag a face = move that face only (Ctrl = whole shell). Corner handle = scale UVs (X/Y = one axis only). Drag empty space = pan (double-click resets). Wheel = zoom.</div>
+    </div>
+    <div style="border-top:1px solid var(--border); padding:8px; overflow-y:auto; min-height:0">
+      <div class="section">
+        <h3>Selected shell</h3>
+        <div id="shellProps"></div>
+      </div>
+    </div>
+  </aside>
+</main>
+<footer id="statusBar">
+  <span id="statSel">No selection</span>
+  <span id="statUV"></span>
+  <span class="spacer" style="flex:1"></span>
+  <span id="statValid"></span>
+</footer>
+
+<dialog id="dlgJson">
+  <h2 id="dlgTitle">JSON</h2>
+  <textarea id="dlgText" spellcheck="false"></textarea>
+  <div style="display:flex; gap:8px; justify-content:flex-end">
+    <button id="dlgCopy">Copy</button>
+    <button id="dlgClose">Close</button>
+  </div>
+</dialog>
+
+<script src="app.js?v=85"></script>
+<script src="autoreload.js"></script>
+</body>
+</html>

@@ -53,7 +53,11 @@ public enum Mixins implements IMixins {
                     "witchery.ItemBrewMixin",
                     "witchery.TransformWolfmanMixin",
                     "witchery.TransformWolfMixin",
-                    "witchery.ModelWolfmanTailMixin")
+                    "witchery.ModelWolfmanTailMixin",
+                    "witchery.RenderWolfmanMixin")
+            .setPhase(Phase.LATE)),
+    WOLF_TAIL_VELOCITY(new MixinBuilder("Wolf form tail lifts with velocity instead of wagging")
+            .addClientMixins("minecraft.ModelWolfMixin")
             .setPhase(Phase.LATE)),
     WITCHERY_NEI_CONFIG(new MixinBuilder()
             .addCommonMixins("witchery.NEIWitcheryConfigMixin")

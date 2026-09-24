@@ -26,6 +26,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.emoniph.witchery.client.TransformWolf;
 
+import alkalus.main.mixins.hooks.TailAnimationHelper;
+
 /**
  * Vanilla RenderWolf never renders a held item (RendererLivingEntity.renderEquippedItems is empty and RenderWolf does
  * not override it), so a wolf-form werewolf's item is invisible in third person even though the server keeps it. This
@@ -37,6 +39,13 @@ public abstract class TransformWolfMixin {
 
     @Shadow(remap = false)
     private EntityWolf proxyEntity;
+
+    @Inject(method = "syncModelWith", at = @At("TAIL"), remap = false)
+    private void witcheryextras$flagVelocityTail(EntityLivingBase entity, boolean frontface, CallbackInfo ci) {
+        if (this.proxyEntity != null) {
+            this.proxyEntity.getEntityData().setBoolean(TailAnimationHelper.VELOCITY_TAIL_FLAG, true);
+        }
+    }
 
     @Inject(method = "render", at = @At("TAIL"), remap = false)
     private void witcheryextras$renderMuzzleItem(World worldObj, EntityLivingBase entity, double x, double y, double z,
