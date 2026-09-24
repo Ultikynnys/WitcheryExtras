@@ -46,13 +46,11 @@ public abstract class RenderWolfmanMixin {
     private void witcheryextras$setArmorPassSlot(EntityLiving entity, int slot, float partialTicks,
             CallbackInfoReturnable<Integer> cir) {
         boolean faceShells = slot == 0 && RenderWolfmanMixin.isFullFaceHelmet(entity.getEquipmentInSlot(4));
-        if (this.field_82423_g instanceof ModelWolfmanArmor) {
-            ((ModelWolfmanArmor) this.field_82423_g).setFaceShells(faceShells);
-            ((ModelWolfmanArmor) this.field_82423_g).setArmorSlot(slot);
-        }
-        if (this.field_82425_h instanceof ModelWolfmanArmor) {
-            ((ModelWolfmanArmor) this.field_82425_h).setFaceShells(faceShells);
-            ((ModelWolfmanArmor) this.field_82425_h).setArmorSlot(slot);
+        for (ModelWolfman field : new ModelWolfman[] { this.field_82423_g, this.field_82425_h }) {
+            if (field instanceof ModelWolfmanArmor) {
+                ((ModelWolfmanArmor) field).setFaceShells(faceShells);
+                ((ModelWolfmanArmor) field).setArmorSlot(slot);
+            }
         }
     }
 

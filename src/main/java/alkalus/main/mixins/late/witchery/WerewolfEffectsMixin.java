@@ -29,9 +29,8 @@ public abstract class WerewolfEffectsMixin {
         if (!isWolfman) {
             return;
         }
-        boolean creative = player.capabilities.isCreativeMode;
-        boolean holdItems = creative || WitcheryUpgrades.hasGreaterFormControl(player);
-        boolean wearArmor = creative || WitcheryUpgrades.hasFormMastery(player);
+        boolean holdItems = WitcheryUpgrades.beastKeepsHeldItem(player);
+        boolean wearArmor = WitcheryUpgrades.beastKeepsArmor(player);
         if (!holdItems && !wearArmor) {
             return;
         }

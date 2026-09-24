@@ -2,6 +2,7 @@ package alkalus.main.handlers;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraftforge.common.MinecraftForge;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,14 +40,7 @@ public class BloodMagicTierHandler {
         try {
             Class.forName("WayofTime.alchemicalWizardry.api.event.SacrificeKnifeUsedEvent");
             Class<?> listener = Class.forName("alkalus.main.handlers.BloodMagicEventListener");
-            try {
-                listener.getField("INSTANCE");
-            } catch (NoSuchFieldException e) {
-                // fall through to newInstance
-            }
-            Object instance = listener.getField("INSTANCE") != null ? listener.getField("INSTANCE").get(null)
-                    : listener.newInstance();
-            net.minecraftforge.common.MinecraftForge.EVENT_BUS.register(instance);
+            MinecraftForge.EVENT_BUS.register(listener.getField("INSTANCE").get(null));
             LOG.info("WitcheryExtras: Blood Magic detected, Blood Magic tier listener active");
         } catch (ClassNotFoundException e) {
             LOG.info("WitcheryExtras: Blood Magic not present, Blood Magic tier listener disabled");

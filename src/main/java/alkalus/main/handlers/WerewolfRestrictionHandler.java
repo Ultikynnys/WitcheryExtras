@@ -56,7 +56,7 @@ public class WerewolfRestrictionHandler {
         if (ex == null || ex.getCreatureType() == TransformCreature.WOLF) {
             return false;
         }
-        return !WitcheryUpgrades.hasGreaterFormControl(player);
+        return !WitcheryUpgrades.beastKeepsHeldItem(player);
     }
 
     private boolean blocksArmor(EntityPlayer player) {
@@ -64,7 +64,7 @@ public class WerewolfRestrictionHandler {
         if (ex == null) {
             return false;
         }
-        return !(ex.getCreatureType() == TransformCreature.WOLFMAN && WitcheryUpgrades.hasFormMastery(player));
+        return !(ex.getCreatureType() == TransformCreature.WOLFMAN && WitcheryUpgrades.beastKeepsArmor(player));
     }
 
     /** Stock exempts the moon charm (the werewolf's own transformation tool) from the beast-form sweep. */

@@ -33,7 +33,7 @@ public abstract class TransformWolfmanMixin {
             return;
         }
         EntityPlayer player = (EntityPlayer) entity;
-        if (!player.capabilities.isCreativeMode && !WitcheryUpgrades.hasFormMastery(player)) {
+        if (!WitcheryUpgrades.beastKeepsArmor(player)) {
             return;
         }
         for (int slot = 1; slot <= 4; slot++) {

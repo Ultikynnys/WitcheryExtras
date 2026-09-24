@@ -37,7 +37,7 @@ public class WerewolfProgressionRite extends Rite {
 
     @Override
     public void addSteps(ArrayList steps, int initialStage) {
-        steps.add(new Step(initialStage));
+        steps.add(new Step());
     }
 
     private String key(String suffix) {
@@ -63,7 +63,7 @@ public class WerewolfProgressionRite extends Rite {
 
     private final class Step extends RitualStep {
 
-        Step(int initialStage) {
+        Step() {
             super(true);
         }
 
