@@ -971,23 +971,19 @@ function refreshSelHighlight() {
   }
 }
 
-/* ---------- session persistence (survives auto-reload) ---------- */
+/* ---------- session persistence (survives auto-reload, in-memory only) ---------- */
+let sessionPayload = null;
 function saveSession() {
   clearTimeout(saveSession._t);
   saveSession._t = setTimeout(() => {
-    try { sessionStorage.setItem('armor-editor', JSON.stringify(projectPayload())); } catch (e) { /* ignore */ }
+    sessionPayload = projectPayload();
   }, 250);
 }
 function restoreSession() {
-  try {
-    const raw = sessionStorage.getItem('armor-editor');
-    if (!raw) return false;
-    return applyProject(JSON.parse(raw));
-  } catch (e) { return false; }
+  return sessionPayload ? applyProject(sessionPayload) : false;
 }
 
-/* ---------- explicit save / load (localStorage, survives browser restart) ---------- */
-const SAVE_KEY = 'armor-editor-project';
+/* ---------- explicit save / load (local file) ---------- */
 function projectPayload() {
   return {
     version: 1,
@@ -1047,18 +1043,33 @@ function syncControls() {
   const ps = $('#armorPreset'); if (ps) ps.value = state.preset;
 }
 function saveProject() {
-  try {
-    localStorage.setItem(SAVE_KEY, JSON.stringify(projectPayload()));
-    log('Saved — ' + state.shells.length + ' shells (' + new Date().toLocaleTimeString() + ')');
-  } catch (e) { log('Save failed: ' + e.message); }
+  const blob = new Blob([JSON.stringify(projectPayload(), null, 2)], { type: 'application/json' });
+  const a = el('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'armor-project.json';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  log('Saved to armor-project.json — ' + state.shells.length + ' shells (' + new Date().toLocaleTimeString() + ')');
 }
 function loadProject() {
-  let d = null;
-  try { d = JSON.parse(localStorage.getItem(SAVE_KEY) || 'null'); } catch (e) { d = null; }
-  if (!d) { log('No saved project found'); return; }
-  pushUndo();
-  applyProject(d);
-  log('Loaded saved project (' + state.shells.length + ' shells)');
+  const inp = el('input');
+  inp.type = 'file';
+  inp.accept = '.json,application/json';
+  inp.onchange = () => {
+    const f = inp.files[0];
+    if (!f) return;
+    f.text().then((txt) => {
+      let d = null;
+      try { d = JSON.parse(txt); } catch (e) { log('Load failed: ' + e.message); return; }
+      if (!d || !Array.isArray(d.shells)) { log('Load failed: not a project file'); return; }
+      pushUndo();
+      applyProject(d);
+      log('Loaded ' + f.name + ' (' + state.shells.length + ' shells)');
+    });
+  };
+  inp.click();
 }
 
 /* ---------- undo / redo (snapshot stack) ---------- */
